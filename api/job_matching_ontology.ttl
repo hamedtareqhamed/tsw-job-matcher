@@ -1,0 +1,770 @@
+@prefix ex: <http://example.org/jobmatch#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+ex:AIEngineer a ex:Job ;
+    rdfs:label "AI Engineer" ;
+    ex:hasJobLevel "Entry-Level" ;
+    ex:hasRequiredDegreeLevel "Bachelor" ;
+    ex:offeredBy ex:TechNova ;
+    ex:requiresCoreSkill ex:DeepLearning,
+        ex:MachineLearning,
+        ex:NLP ;
+    ex:requiresSkill ex:Git,
+        ex:Python .
+
+ex:Angular a ex:WebCloudSkill ;
+    rdfs:label "Angular" .
+
+ex:Ansible a ex:DevToolSkill ;
+    rdfs:label "Ansible" .
+
+ex:App_Ahmad a ex:Applicant ;
+    rdfs:label "Student 2: Web Design Aspirant" ;
+    ex:hasApplicantType "IT Student" ;
+    ex:hasEducation ex:Edu_Ahmad ;
+    ex:hasLocation "Petaling Jaya" ;
+    ex:hasName "Student 2: Web Design Aspirant" ;
+    ex:hasSkill ex:CSS,
+        ex:HTML,
+        ex:JavaScript,
+        ex:React .
+
+ex:App_Lina a ex:Applicant ;
+    rdfs:label "Graduate 3: Backend Engineer" ;
+    ex:hasApplicantType "Fresh Graduate" ;
+    ex:hasEducation ex:Edu_Lina ;
+    ex:hasExperience ex:Exp_Lina ;
+    ex:hasLocation "Penang" ;
+    ex:hasName "Graduate 3: Backend Engineer" ;
+    ex:hasSkill ex:APIIntegration,
+        ex:Java,
+        ex:NodeJS,
+        ex:Python,
+        ex:SQL .
+
+ex:App_Mei a ex:Applicant ;
+    rdfs:label "Student 5: Data Analysis Aspirant" ;
+    ex:hasApplicantType "IT Student" ;
+    ex:hasEducation ex:Edu_Mei ;
+    ex:hasLocation "Kuala Lumpur" ;
+    ex:hasName "Student 5: Data Analysis Aspirant" ;
+    ex:hasSkill ex:DataAnalysis,
+        ex:NoSQL,
+        ex:Python,
+        ex:SQL .
+
+ex:App_Omar a ex:Applicant ;
+    rdfs:label "Graduate 4: Cybersecurity Specialist" ;
+    ex:hasApplicantType "Fresh Graduate" ;
+    ex:hasEducation ex:Edu_Omar ;
+    ex:hasExperience ex:Exp_Omar ;
+    ex:hasLocation "Cyberjaya" ;
+    ex:hasName "Graduate 4: Cybersecurity Specialist" ;
+    ex:hasSkill ex:CloudComputingAWS,
+        ex:Cybersecurity,
+        ex:PenetrationTesting,
+        ex:Python .
+
+ex:App_Sara a ex:Applicant ;
+    rdfs:label "Graduate 1: AI Specialist" ;
+    ex:hasApplicantType "Fresh Graduate" ;
+    ex:hasEducation ex:Edu_Sara ;
+    ex:hasExperience ex:Exp_Sara ;
+    ex:hasLocation "Kuala Lumpur" ;
+    ex:hasName "Graduate 1: AI Specialist" ;
+    ex:hasSkill ex:DeepLearning,
+        ex:GitHub,
+        ex:HuggingFace,
+        ex:MachineLearning,
+        ex:Python .
+
+ex:App_Tariq a ex:Applicant ;
+    rdfs:label "Graduate 6: Fullstack Developer" ;
+    ex:hasApplicantType "Fresh Graduate" ;
+    ex:hasEducation ex:Edu_Tariq ;
+    ex:hasExperience ex:Exp_Tariq ;
+    ex:hasLocation "Petaling Jaya" ;
+    ex:hasName "Graduate 6: Fullstack Developer" ;
+    ex:hasSkill ex:CSS,
+        ex:Git,
+        ex:HTML,
+        ex:JavaScript,
+        ex:NodeJS,
+        ex:React .
+
+ex:BackendDeveloper a ex:Job ;
+    rdfs:label "Backend Developer" ;
+    ex:hasJobLevel "Entry-Level" ;
+    ex:hasRequiredDegreeLevel "Bachelor" ;
+    ex:offeredBy ex:WebWorks ;
+    ex:requiresCoreSkill ex:APIIntegration,
+        ex:Java,
+        ex:NodeJS ;
+    ex:requiresSkill ex:Git,
+        ex:Python,
+        ex:SQL .
+
+ex:CI_CD a ex:DevToolSkill ;
+    rdfs:label "CI/CD" .
+
+ex:CPlusPlus a ex:AIDataSkill,
+        ex:ProgrammingLanguage ;
+    rdfs:label "C++" .
+
+ex:CSharp a ex:ProgrammingLanguage,
+        ex:WebCloudSkill ;
+    rdfs:label "C#" .
+
+ex:CloudArchitect a ex:Job ;
+    rdfs:label "Cloud Architect" ;
+    ex:hasJobLevel "Junior" ;
+    ex:hasRequiredDegreeLevel "Bachelor" ;
+    ex:offeredBy ex:TechNova ;
+    ex:requiresCoreSkill ex:CloudComputingAWS,
+        ex:Docker,
+        ex:Kubernetes ;
+    ex:requiresSkill ex:Git,
+        ex:Python .
+
+ex:Cryptography a ex:SecuritySkill ;
+    rdfs:label "Cryptography" .
+
+ex:CybersecurityAnalyst a ex:Job ;
+    rdfs:label "Cybersecurity Analyst" ;
+    ex:hasJobLevel "Entry-Level" ;
+    ex:hasRequiredDegreeLevel "Bachelor" ;
+    ex:offeredBy ex:CyberSecure ;
+    ex:requiresCoreSkill ex:Cybersecurity,
+        ex:PenetrationTesting ;
+    ex:requiresSkill ex:CloudComputingAWS,
+        ex:Git,
+        ex:Python .
+
+ex:DataEngineer a ex:Job ;
+    rdfs:label "Data Engineer" ;
+    ex:hasJobLevel "Junior" ;
+    ex:hasRequiredDegreeLevel "Bachelor" ;
+    ex:offeredBy ex:DataDriven ;
+    ex:requiresCoreSkill ex:DataAnalysis,
+        ex:Python,
+        ex:SQL ;
+    ex:requiresSkill ex:Git,
+        ex:NoSQL .
+
+ex:DataScientist a ex:Job ;
+    rdfs:label "Data Scientist" ;
+    ex:hasJobLevel "Junior" ;
+    ex:hasRequiredDegreeLevel "Bachelor" ;
+    ex:offeredBy ex:DataDriven ;
+    ex:requiresCoreSkill ex:DataAnalysis,
+        ex:MachineLearning,
+        ex:Python ;
+    ex:requiresSkill ex:NLP,
+        ex:SQL .
+
+ex:DevOpsEngineer a ex:Job ;
+    rdfs:label "DevOps Engineer" ;
+    ex:hasJobLevel "Entry-Level" ;
+    ex:hasRequiredDegreeLevel "Bachelor" ;
+    ex:offeredBy ex:CyberSecure ;
+    ex:requiresCoreSkill ex:CloudComputingAWS,
+        ex:Docker,
+        ex:Kubernetes ;
+    ex:requiresSkill ex:Git,
+        ex:GitHub,
+        ex:Python .
+
+ex:Django a ex:AIDataSkill,
+        ex:WebCloudSkill ;
+    rdfs:label "Django" .
+
+ex:EthicalHacking a ex:SecuritySkill ;
+    rdfs:label "Ethical Hacking" .
+
+ex:Flutter a ex:WebCloudSkill ;
+    rdfs:label "Flutter" .
+
+ex:FrontendDeveloper a ex:Job ;
+    rdfs:label "Frontend Developer" ;
+    ex:hasJobLevel "Entry-Level" ;
+    ex:hasRequiredDegreeLevel "Diploma" ;
+    ex:offeredBy ex:WebWorks ;
+    ex:requiresCoreSkill ex:JavaScript,
+        ex:React ;
+    ex:requiresSkill ex:CSS,
+        ex:Git,
+        ex:HTML .
+
+ex:FullStackDeveloper a ex:Job ;
+    rdfs:label "Full Stack Developer" ;
+    ex:hasJobLevel "Junior" ;
+    ex:hasRequiredDegreeLevel "Bachelor" ;
+    ex:offeredBy ex:TechNova ;
+    ex:requiresCoreSkill ex:JavaScript,
+        ex:NodeJS,
+        ex:React ;
+    ex:requiresSkill ex:Git,
+        ex:Python,
+        ex:SQL .
+
+ex:Go a ex:DevToolSkill,
+        ex:ProgrammingLanguage,
+        ex:WebCloudSkill ;
+    rdfs:label "Go" .
+
+ex:Jenkins a ex:DevToolSkill ;
+    rdfs:label "Jenkins" .
+
+ex:JobMatchingOntology a owl:Ontology ;
+    rdfs:label "Smart Job Matching Ontology for IT Graduates" ;
+    rdfs:comment "An OWL ontology that models IT job positions, applicant profiles, skills, education, and experience to enable semantic job matching for IT students and fresh graduates." .
+
+ex:Kotlin a ex:ProgrammingLanguage,
+        ex:WebCloudSkill ;
+    rdfs:label "Kotlin" .
+
+ex:Laravel a ex:WebCloudSkill ;
+    rdfs:label "Laravel" .
+
+ex:Linux a ex:DevToolSkill,
+        ex:SecuritySkill ;
+    rdfs:label "Linux" .
+
+ex:MobileAppDeveloper a ex:Job ;
+    rdfs:label "Mobile App Developer" ;
+    ex:hasJobLevel "Junior" ;
+    ex:hasRequiredDegreeLevel "Bachelor" ;
+    ex:offeredBy ex:WebWorks ;
+    ex:requiresCoreSkill ex:JavaScript,
+        ex:React ;
+    ex:requiresSkill ex:CSS,
+        ex:Git,
+        ex:HTML .
+
+ex:PHP a ex:ProgrammingLanguage,
+        ex:WebCloudSkill ;
+    rdfs:label "PHP" .
+
+ex:Pandas a ex:AIDataSkill ;
+    rdfs:label "Pandas" .
+
+ex:PowerBI a ex:AIDataSkill ;
+    rdfs:label "Power BI" .
+
+ex:QAAutomationEngineer a ex:Job ;
+    rdfs:label "QA Automation Engineer" ;
+    ex:hasJobLevel "Entry-Level" ;
+    ex:hasRequiredDegreeLevel "Bachelor" ;
+    ex:offeredBy ex:TechNova ;
+    ex:requiresCoreSkill ex:JavaScript,
+        ex:Python ;
+    ex:requiresSkill ex:Git,
+        ex:GitHub .
+
+ex:ReactNative a ex:WebCloudSkill ;
+    rdfs:label "React Native" .
+
+ex:ResearchScientist_1781721106 a ex:Job ;
+    rdfs:label "Research Scientist" ;
+    ex:hasJobLevel "Senior" ;
+    ex:hasRequiredDegreeLevel "PhD" ;
+    ex:offeredBy ex:AIMalaysiaLabs ;
+    ex:requiresCoreSkill ex:DeepLearning,
+        ex:PyTorch,
+        ex:Python ;
+    ex:requiresSkill ex:Git .
+
+ex:Ruby a ex:ProgrammingLanguage,
+        ex:WebCloudSkill ;
+    rdfs:label "Ruby" .
+
+ex:Rust a ex:ProgrammingLanguage,
+        ex:SecuritySkill ;
+    rdfs:label "Rust" .
+
+ex:SoftwareTester a ex:Job ;
+    rdfs:label "Software Tester" ;
+    ex:hasJobLevel "Entry-Level" ;
+    ex:hasRequiredDegreeLevel "Diploma" ;
+    ex:offeredBy ex:WebWorks ;
+    ex:requiresCoreSkill ex:CSS,
+        ex:HTML ;
+    ex:requiresSkill ex:Git .
+
+ex:SpringBoot a ex:WebCloudSkill ;
+    rdfs:label "Spring Boot" .
+
+ex:Svelte a ex:WebCloudSkill ;
+    rdfs:label "Svelte" .
+
+ex:Swift a ex:ProgrammingLanguage,
+        ex:WebCloudSkill ;
+    rdfs:label "Swift" .
+
+ex:SystemAdministrator a ex:Job ;
+    rdfs:label "System Administrator" ;
+    ex:hasJobLevel "Entry-Level" ;
+    ex:hasRequiredDegreeLevel "Diploma" ;
+    ex:offeredBy ex:CyberSecure ;
+    ex:requiresCoreSkill ex:CloudComputingAWS,
+        ex:Cybersecurity ;
+    ex:requiresSkill ex:Docker,
+        ex:Git .
+
+ex:Tableau a ex:AIDataSkill ;
+    rdfs:label "Tableau" .
+
+ex:TensorFlow a ex:AIDataSkill ;
+    rdfs:label "TensorFlow" .
+
+ex:Terraform a ex:DevToolSkill ;
+    rdfs:label "Terraform" .
+
+ex:TypeScript a ex:ProgrammingLanguage,
+        ex:WebCloudSkill ;
+    rdfs:label "TypeScript" .
+
+ex:UXUIDesigner a ex:Job ;
+    rdfs:label "UX/UI Designer" ;
+    ex:hasJobLevel "Entry-Level" ;
+    ex:hasRequiredDegreeLevel "Diploma" ;
+    ex:offeredBy ex:WebWorks ;
+    ex:requiresCoreSkill ex:CSS,
+        ex:HTML ;
+    ex:requiresSkill ex:JavaScript,
+        ex:React .
+
+ex:Vue a ex:WebCloudSkill ;
+    rdfs:label "Vue" .
+
+ex:Wireshark a ex:DevToolSkill,
+        ex:SecuritySkill ;
+    rdfs:label "Wireshark" .
+
+ex:hasApplicantType a owl:DatatypeProperty ;
+    rdfs:label "has applicant type" ;
+    rdfs:comment "The category of the applicant, e.g. 'Fresh Graduate' or 'IT Student'." ;
+    rdfs:domain ex:Applicant ;
+    rdfs:range xsd:string .
+
+ex:hasDegreeLevel a owl:DatatypeProperty ;
+    rdfs:label "has degree level" ;
+    rdfs:comment "The level of the degree: Bachelor, Diploma, etc." ;
+    rdfs:domain ex:Education ;
+    rdfs:range xsd:string .
+
+ex:hasDegreeName a owl:DatatypeProperty ;
+    rdfs:label "has degree name" ;
+    rdfs:comment "The name or title of the degree, e.g. 'BSc Computer Science'." ;
+    rdfs:domain ex:Education ;
+    rdfs:range xsd:string .
+
+ex:hasDurationMonths a owl:DatatypeProperty ;
+    rdfs:label "has duration (months)" ;
+    rdfs:comment "Duration of the experience in months." ;
+    rdfs:domain ex:Experience ;
+    rdfs:range xsd:integer .
+
+ex:hasEducation a owl:ObjectProperty ;
+    rdfs:label "has education" ;
+    rdfs:comment "Links an applicant to their educational qualification." ;
+    rdfs:domain ex:Applicant ;
+    rdfs:range ex:Education .
+
+ex:hasExperience a owl:ObjectProperty ;
+    rdfs:label "has experience" ;
+    rdfs:comment "Links an applicant to a work or internship experience." ;
+    rdfs:domain ex:Applicant ;
+    rdfs:range ex:Experience .
+
+ex:hasExperienceType a owl:DatatypeProperty ;
+    rdfs:label "has experience type" ;
+    rdfs:comment "The type of experience, e.g. 'Internship', 'Part-time', 'Freelance'." ;
+    rdfs:domain ex:Experience ;
+    rdfs:range xsd:string .
+
+ex:hasFieldOfStudy a owl:DatatypeProperty ;
+    rdfs:label "has field of study" ;
+    rdfs:comment "The specialisation or field of the degree." ;
+    rdfs:domain ex:Education ;
+    rdfs:range xsd:string .
+
+ex:hasGraduationYear a owl:DatatypeProperty ;
+    rdfs:label "has graduation year" ;
+    rdfs:comment "The year the applicant graduated or expects to graduate." ;
+    rdfs:domain ex:Education ;
+    rdfs:range xsd:integer .
+
+ex:hasIndustry a owl:DatatypeProperty ;
+    rdfs:label "has industry" ;
+    rdfs:comment "The industry sector of the company." ;
+    rdfs:domain ex:Company ;
+    rdfs:range xsd:string .
+
+ex:hasInstitution a owl:DatatypeProperty ;
+    rdfs:label "has institution" ;
+    rdfs:comment "The university or institution that awarded the qualification." ;
+    rdfs:domain ex:Education ;
+    rdfs:range xsd:string .
+
+ex:hasJobLevel a owl:DatatypeProperty ;
+    rdfs:label "has job level" ;
+    rdfs:comment "Seniority level of the position, e.g. 'Entry-Level', 'Junior'." ;
+    rdfs:domain ex:Job ;
+    rdfs:range xsd:string .
+
+ex:hasLocation a owl:DatatypeProperty ;
+    rdfs:label "has location" ;
+    rdfs:comment "The headquarters or office location of the company or applicant." ;
+    rdfs:range xsd:string .
+
+ex:hasName a owl:DatatypeProperty ;
+    rdfs:label "has name" ;
+    rdfs:comment "The full name of the applicant." ;
+    rdfs:domain ex:Applicant ;
+    rdfs:range xsd:string .
+
+ex:hasOrganisation a owl:DatatypeProperty ;
+    rdfs:label "has organisation" ;
+    rdfs:comment "The organisation where the experience took place." ;
+    rdfs:domain ex:Experience ;
+    rdfs:range xsd:string .
+
+ex:hasRequiredDegreeLevel a owl:DatatypeProperty ;
+    rdfs:label "has required degree level" ;
+    rdfs:comment "The minimum education level required by this job." ;
+    rdfs:domain ex:Job ;
+    rdfs:range xsd:string .
+
+ex:hasRole a owl:DatatypeProperty ;
+    rdfs:label "has role" ;
+    rdfs:comment "The job title or role held during the experience." ;
+    rdfs:domain ex:Experience ;
+    rdfs:range xsd:string .
+
+ex:hasSkill a owl:ObjectProperty ;
+    rdfs:label "has skill" ;
+    rdfs:comment "Links an applicant to a skill they possess." ;
+    rdfs:domain ex:Applicant ;
+    rdfs:range ex:Skill .
+
+ex:offersJob a owl:ObjectProperty ;
+    rdfs:label "offers job" ;
+    rdfs:comment "Associates a company with a job position it offers (inverse of offeredBy)." ;
+    rdfs:domain ex:Company ;
+    rdfs:range ex:Job ;
+    owl:inverseOf ex:offeredBy .
+
+ex:requiresCoreSkill a owl:ObjectProperty ;
+    rdfs:label "requires core skill" ;
+    rdfs:comment "Links a job to a core skill it requires." ;
+    rdfs:domain ex:Job ;
+    rdfs:range ex:Skill ;
+    rdfs:subPropertyOf ex:requiresSkill .
+
+ex:Edu_Ahmad a ex:Education ;
+    rdfs:label "Diploma in Information Technology" ;
+    ex:hasDegreeLevel "Diploma" ;
+    ex:hasDegreeName "Diploma in Information Technology" ;
+    ex:hasFieldOfStudy "Information Technology" ;
+    ex:hasGraduationYear 2026 ;
+    ex:hasInstitution "Politeknik Sultan Salahuddin Abdul Aziz Shah" .
+
+ex:Edu_Lina a ex:Education ;
+    rdfs:label "BSc Software Engineering" ;
+    ex:hasDegreeLevel "Bachelor" ;
+    ex:hasDegreeName "BSc Software Engineering" ;
+    ex:hasFieldOfStudy "Software Engineering" ;
+    ex:hasGraduationYear 2025 ;
+    ex:hasInstitution "Universiti Teknologi Malaysia" .
+
+ex:Edu_Mei a ex:Education ;
+    rdfs:label "BSc Computer Science" ;
+    ex:hasDegreeLevel "Bachelor" ;
+    ex:hasDegreeName "BSc Computer Science" ;
+    ex:hasFieldOfStudy "Computer Science" ;
+    ex:hasGraduationYear 2026 ;
+    ex:hasInstitution "Universiti Malaya" .
+
+ex:Edu_Omar a ex:Education ;
+    rdfs:label "BSc Cybersecurity" ;
+    ex:hasDegreeLevel "Bachelor" ;
+    ex:hasDegreeName "BSc Cybersecurity" ;
+    ex:hasFieldOfStudy "Cybersecurity" ;
+    ex:hasGraduationYear 2025 ;
+    ex:hasInstitution "Asia Pacific University" .
+
+ex:Edu_Sara a ex:Education ;
+    rdfs:label "BSc Computer Science (Artificial Intelligence)" ;
+    ex:hasDegreeLevel "Bachelor" ;
+    ex:hasDegreeName "BSc Computer Science (Artificial Intelligence)" ;
+    ex:hasFieldOfStudy "Artificial Intelligence" ;
+    ex:hasGraduationYear 2025 ;
+    ex:hasInstitution "Multimedia University" .
+
+ex:Edu_Tariq a ex:Education ;
+    rdfs:label "BSc Information Technology" ;
+    ex:hasDegreeLevel "Bachelor" ;
+    ex:hasDegreeName "BSc Information Technology" ;
+    ex:hasFieldOfStudy "Information Technology" ;
+    ex:hasGraduationYear 2025 ;
+    ex:hasInstitution "HELP University" .
+
+ex:Exp_Lina a ex:Experience ;
+    rdfs:label "Software Developer Intern at Petronas Digital" ;
+    ex:hasDurationMonths 6 ;
+    ex:hasExperienceType "Internship" ;
+    ex:hasOrganisation "Petronas Digital" ;
+    ex:hasRole "Software Developer Intern" .
+
+ex:Exp_Omar a ex:Experience ;
+    rdfs:label "SOC Analyst Intern at CyberSecure Ltd" ;
+    ex:hasDurationMonths 3 ;
+    ex:hasExperienceType "Internship" ;
+    ex:hasOrganisation "CyberSecure Ltd" ;
+    ex:hasRole "SOC Analyst Intern" .
+
+ex:Exp_Sara a ex:Experience ;
+    rdfs:label "AI Research Intern at TechNova Solutions" ;
+    ex:hasDurationMonths 3 ;
+    ex:hasExperienceType "Internship" ;
+    ex:hasOrganisation "TechNova Solutions" ;
+    ex:hasRole "AI Research Intern" .
+
+ex:Exp_Tariq a ex:Experience ;
+    rdfs:label "Freelance Web Developer" ;
+    ex:hasDurationMonths 8 ;
+    ex:hasExperienceType "Freelance" ;
+    ex:hasOrganisation "Self-employed" ;
+    ex:hasRole "Freelance Web Developer" .
+
+ex:AIMalaysiaLabs a ex:Company ;
+    rdfs:label "AI Malaysia Labs" ;
+    ex:hasIndustry "Artificial Intelligence" ;
+    ex:hasLocation "Cyberjaya" .
+
+ex:HuggingFace a ex:AIDataSkill ;
+    rdfs:label "Hugging Face" .
+
+ex:PyTorch a ex:AIDataSkill ;
+    rdfs:label "PyTorch" .
+
+ex:offeredBy a owl:FunctionalProperty,
+        owl:ObjectProperty ;
+    rdfs:label "offered by" ;
+    rdfs:comment "Associates a job position with the company that offers it." ;
+    rdfs:domain ex:Job ;
+    rdfs:range ex:Company .
+
+ex:requiresSkill a owl:ObjectProperty ;
+    rdfs:label "requires skill" ;
+    rdfs:comment "Links a job to a skill it requires from candidates." ;
+    rdfs:domain ex:Job ;
+    rdfs:range ex:Skill .
+
+ex:APIIntegration a ex:DevToolSkill ;
+    rdfs:label "API Integration" .
+
+ex:DataDriven a ex:Company ;
+    rdfs:label "DataDriven Inc" ;
+    ex:hasIndustry "Data Science & Analytics" ;
+    ex:hasLocation "Penang" .
+
+ex:Java a ex:ProgrammingLanguage ;
+    rdfs:label "Java" .
+
+ex:Kubernetes a ex:DevToolSkill,
+        ex:WebCloudSkill ;
+    rdfs:label "Kubernetes" .
+
+ex:NLP a ex:AIDataSkill ;
+    rdfs:label "Natural Language Processing" .
+
+ex:NoSQL a ex:AIDataSkill,
+        ex:ProgrammingLanguage ;
+    rdfs:label "NoSQL" .
+
+ex:PenetrationTesting a ex:SecuritySkill ;
+    rdfs:label "Penetration Testing" .
+
+ex:CyberSecure a ex:Company ;
+    rdfs:label "CyberSecure Ltd" ;
+    ex:hasIndustry "Cybersecurity Services" ;
+    ex:hasLocation "Cyberjaya" .
+
+ex:Cybersecurity a ex:SecuritySkill ;
+    rdfs:label "Cybersecurity" .
+
+ex:DataAnalysis a ex:AIDataSkill ;
+    rdfs:label "Data Analysis" .
+
+ex:DeepLearning a ex:AIDataSkill ;
+    rdfs:label "Deep Learning" .
+
+ex:Docker a ex:DevToolSkill,
+        ex:WebCloudSkill ;
+    rdfs:label "Docker" .
+
+ex:GitHub a ex:DevToolSkill ;
+    rdfs:label "GitHub" .
+
+ex:MachineLearning a ex:AIDataSkill ;
+    rdfs:label "Machine Learning" .
+
+ex:NodeJS a ex:WebCloudSkill ;
+    rdfs:label "Node.js" .
+
+ex:TechNova a ex:Company ;
+    rdfs:label "TechNova Solutions" ;
+    ex:hasIndustry "Artificial Intelligence & Cloud Computing" ;
+    ex:hasLocation "Kuala Lumpur" .
+
+ex:CloudComputingAWS a ex:WebCloudSkill ;
+    rdfs:label "Cloud Computing (AWS)" .
+
+ex:WebWorks a ex:Company ;
+    rdfs:label "WebWorks Agency" ;
+    ex:hasIndustry "Web Development & Digital Design" ;
+    ex:hasLocation "Petaling Jaya" .
+
+ex:CSS a ex:ProgrammingLanguage,
+        ex:WebCloudSkill ;
+    rdfs:label "CSS" .
+
+ex:HTML a ex:ProgrammingLanguage,
+        ex:WebCloudSkill ;
+    rdfs:label "HTML" .
+
+ex:React a ex:WebCloudSkill ;
+    rdfs:label "React" .
+
+ex:SQL a ex:AIDataSkill,
+        ex:ProgrammingLanguage ;
+    rdfs:label "SQL" .
+
+ex:JavaScript a ex:ProgrammingLanguage,
+        ex:WebCloudSkill ;
+    rdfs:label "JavaScript" .
+
+ex:SecuritySkill a owl:Class ;
+    rdfs:label "Cybersecurity Skill" ;
+    rdfs:comment "A skill related to information security and penetration testing." ;
+    rdfs:subClassOf ex:Skill .
+
+ex:Experience a owl:Class ;
+    rdfs:label "Experience" ;
+    rdfs:comment "A work or internship experience record held by an applicant." .
+
+ex:Applicant a owl:Class ;
+    rdfs:label "Applicant" ;
+    rdfs:comment "A person seeking employment — either an IT student or a fresh graduate." ;
+    owl:disjointWith ex:Company,
+        ex:Job,
+        ex:Skill .
+
+ex:Company a owl:Class ;
+    rdfs:label "Company" ;
+    rdfs:comment "An organisation that offers job positions." ;
+    owl:disjointWith ex:Skill .
+
+ex:Skill a owl:Class ;
+    rdfs:label "Skill" ;
+    rdfs:comment "A technical competency relevant to IT positions." .
+
+ex:DevToolSkill a owl:Class ;
+    rdfs:label "Development Tool Skill" ;
+    rdfs:comment "A skill related to version control, CI/CD, or DevOps tooling." ;
+    rdfs:subClassOf ex:Skill .
+
+ex:Education a owl:Class ;
+    rdfs:label "Education" ;
+    rdfs:comment "An educational qualification held by an applicant." .
+
+ex:AIDataSkill a owl:Class ;
+    rdfs:label "AI and Data Science Skill" ;
+    rdfs:comment "A skill related to artificial intelligence, machine learning, or data science." ;
+    rdfs:subClassOf ex:Skill .
+
+ex:Git a ex:DevToolSkill ;
+    rdfs:label "Git" .
+
+ex:Python a ex:ProgrammingLanguage ;
+    rdfs:label "Python" .
+
+ex:ProgrammingLanguage a owl:Class ;
+    rdfs:label "Programming Language" ;
+    rdfs:comment "A programming, scripting, or markup language." ;
+    rdfs:subClassOf ex:Skill .
+
+ex:Job a owl:Class ;
+    rdfs:label "Job" ;
+    rdfs:comment "An IT job position offered by a company." ;
+    owl:disjointWith ex:Company,
+        ex:Skill .
+
+ex:WebCloudSkill a owl:Class ;
+    rdfs:label "Web and Cloud Technology Skill" ;
+    rdfs:comment "A skill related to web development frameworks or cloud platforms." ;
+    rdfs:subClassOf ex:Skill .
+
+# New properties for dynamic Skill Inference, Course Recommendations, and locations
+ex:impliesSkill a owl:ObjectProperty ;
+    rdfs:label "implies skill" ;
+    rdfs:comment "Specifies that possessing a skill transitively implies possessing another skill." ;
+    rdfs:domain ex:Skill ;
+    rdfs:range ex:Skill .
+
+ex:hasRecommendedCourse a owl:DatatypeProperty ;
+    rdfs:label "has recommended course" ;
+    rdfs:comment "Links a skill to a recommended online course title." ;
+    rdfs:domain ex:Skill ;
+    rdfs:range xsd:string .
+
+ex:KlangValleyLocation a owl:Class ;
+    rdfs:label "Klang Valley Location" ;
+    rdfs:comment "Represents a city located within the Klang Valley region." .
+
+# Klang Valley Location instances
+ex:KualaLumpurLocation a ex:KlangValleyLocation ;
+    rdfs:label "Kuala Lumpur" .
+
+ex:PetalingJayaLocation a ex:KlangValleyLocation ;
+    rdfs:label "Petaling Jaya" .
+
+ex:CyberjayaLocation a ex:KlangValleyLocation ;
+    rdfs:label "Cyberjaya" .
+
+# Skill Implication assertions
+ex:React ex:impliesSkill ex:JavaScript, ex:HTML, ex:CSS .
+ex:NodeJS ex:impliesSkill ex:JavaScript .
+ex:DeepLearning ex:impliesSkill ex:MachineLearning, ex:Python .
+ex:MachineLearning ex:impliesSkill ex:Python, ex:DataAnalysis .
+ex:NLP ex:impliesSkill ex:Python .
+ex:GitHub ex:impliesSkill ex:Git .
+ex:Kubernetes ex:impliesSkill ex:Docker .
+ex:PenetrationTesting ex:impliesSkill ex:Cybersecurity .
+
+# Skill Course assertions
+ex:Python ex:hasRecommendedCourse "Python for Everybody Specialization (Coursera)" .
+ex:MachineLearning ex:hasRecommendedCourse "Machine Learning Specialization by Andrew Ng (Coursera)" .
+ex:DeepLearning ex:hasRecommendedCourse "Deep Learning Specialization by DeepLearning.AI" .
+ex:NLP ex:hasRecommendedCourse "Natural Language Processing Specialization (Coursera)" .
+ex:DataAnalysis ex:hasRecommendedCourse "Google Data Analytics Professional Certificate" .
+ex:React ex:hasRecommendedCourse "React - The Complete Guide (Udemy)" .
+ex:NodeJS ex:hasRecommendedCourse "The Complete Node.js Developer Course (Udemy)" .
+ex:JavaScript ex:hasRecommendedCourse "Modern JavaScript From The Beginning" .
+ex:SQL ex:hasRecommendedCourse "SQL for Data Science (Coursera)" .
+ex:Cybersecurity ex:hasRecommendedCourse "Google Cybersecurity Professional Certificate" .
+ex:PenetrationTesting ex:hasRecommendedCourse "CompTIA PenTest+ Pathway" .
+ex:CloudComputingAWS ex:hasRecommendedCourse "AWS Certified Solutions Architect Course" .
+ex:Docker ex:hasRecommendedCourse "Docker Mastery on Udemy" .
+ex:Kubernetes ex:hasRecommendedCourse "Certified Kubernetes Administrator (CKA)" .
+ex:Git ex:hasRecommendedCourse "Git Complete: The Definitive Guide (Udemy)" .
+ex:GitHub ex:hasRecommendedCourse "GitHub Ultimate: Master Git and GitHub" .
+ex:APIIntegration ex:hasRecommendedCourse "REST APIs with Flask and Python" .
+ex:HTML ex:hasRecommendedCourse "HTML & CSS for Beginners" .
+ex:CSS ex:hasRecommendedCourse "CSS - The Complete Guide (Udemy)" .
+
+
