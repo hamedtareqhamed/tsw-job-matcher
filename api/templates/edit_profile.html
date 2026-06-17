@@ -58,6 +58,13 @@
                     <input type="number" name="gradYear" class="form-input" value="{{ user_profile.gradYear }}" required>
                 </div>
                 <div class="form-group">
+                    <label class="form-label">Preferred Work Location</label>
+                    <select name="location" class="form-input" style="cursor: pointer;">
+                        <option value="Kuala Lumpur" {% if user_profile.location == 'Kuala Lumpur' %}selected{% endif %}>Kuala Lumpur</option>
+                        <option value="Petaling Jaya" {% if user_profile.location == 'Petaling Jaya' %}selected{% endif %}>Petaling Jaya</option>
+                        <option value="Cyberjaya" {% if user_profile.location == 'Cyberjaya' %}selected{% endif %}>Cyberjaya</option>
+                        <option value="Penang" {% if user_profile.location == 'Penang' %}selected{% endif %}>Penang</option>
+                    </select>
                 </div>
             </div>
 

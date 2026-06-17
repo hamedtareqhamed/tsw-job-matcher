@@ -411,6 +411,57 @@ ex:UXUIDesigner rdf:type ex:Job ;
                      ex:JavaScript ,
                      ex:React .
 
+ex:DataEngineer rdf:type ex:Job ;
+    rdfs:label "Data Engineer" ;
+    ex:offeredBy ex:DataDriven ;
+    ex:hasJobLevel "Junior" ;
+    ex:hasRequiredDegreeLevel "Bachelor" ;
+    ex:requiresSkill ex:Python ,
+                     ex:SQL ,
+                     ex:NoSQL ,
+                     ex:DataAnalysis ,
+                     ex:Git .
+
+ex:SystemAdministrator rdf:type ex:Job ;
+    rdfs:label "System Administrator" ;
+    ex:offeredBy ex:CyberSecure ;
+    ex:hasJobLevel "Entry-Level" ;
+    ex:hasRequiredDegreeLevel "Diploma" ;
+    ex:requiresSkill ex:Cybersecurity ,
+                     ex:CloudComputingAWS ,
+                     ex:Docker ,
+                     ex:Git .
+
+ex:MobileAppDeveloper rdf:type ex:Job ;
+    rdfs:label "Mobile App Developer" ;
+    ex:offeredBy ex:WebWorks ;
+    ex:hasJobLevel "Junior" ;
+    ex:hasRequiredDegreeLevel "Bachelor" ;
+    ex:requiresSkill ex:JavaScript ,
+                     ex:React ,
+                     ex:HTML ,
+                     ex:CSS ,
+                     ex:Git .
+
+ex:QAAutomationEngineer rdf:type ex:Job ;
+    rdfs:label "QA Automation Engineer" ;
+    ex:offeredBy ex:TechNova ;
+    ex:hasJobLevel "Entry-Level" ;
+    ex:hasRequiredDegreeLevel "Bachelor" ;
+    ex:requiresSkill ex:Python ,
+                     ex:JavaScript ,
+                     ex:Git ,
+                     ex:GitHub .
+
+ex:SoftwareTester rdf:type ex:Job ;
+    rdfs:label "Software Tester" ;
+    ex:offeredBy ex:WebWorks ;
+    ex:hasJobLevel "Entry-Level" ;
+    ex:hasRequiredDegreeLevel "Diploma" ;
+    ex:requiresSkill ex:HTML ,
+                     ex:CSS ,
+                     ex:Git .
+
 # =============================================================
 #  INSTANCES — EDUCATION  (6 education records)
 # =============================================================
@@ -497,8 +548,8 @@ ex:Exp_Tariq rdf:type ex:Experience ;
 #  INSTANCES — APPLICANTS  (6 applicants)
 # =============================================================
 ex:App_Sara rdf:type ex:Applicant ;
-    rdfs:label "Sara binti Mohd Razif" ;
-    ex:hasName "Sara binti Mohd Razif" ;
+    rdfs:label "Graduate 1: AI Specialist" ;
+    ex:hasName "Graduate 1: AI Specialist" ;
     ex:hasApplicantType "Fresh Graduate" ;
     ex:hasEducation ex:Edu_Sara ;
     ex:hasExperience ex:Exp_Sara ;
@@ -509,8 +560,8 @@ ex:App_Sara rdf:type ex:Applicant ;
                ex:GitHub .
 
 ex:App_Ahmad rdf:type ex:Applicant ;
-    rdfs:label "Ahmad Danial bin Yusof" ;
-    ex:hasName "Ahmad Danial bin Yusof" ;
+    rdfs:label "Student 2: Web Design Aspirant" ;
+    ex:hasName "Student 2: Web Design Aspirant" ;
     ex:hasApplicantType "IT Student" ;
     ex:hasEducation ex:Edu_Ahmad ;
     ex:hasSkill ex:HTML ,
@@ -519,8 +570,8 @@ ex:App_Ahmad rdf:type ex:Applicant ;
                ex:React .
 
 ex:App_Lina rdf:type ex:Applicant ;
-    rdfs:label "Lina Tan Wei Ling" ;
-    ex:hasName "Lina Tan Wei Ling" ;
+    rdfs:label "Graduate 3: Backend Engineer" ;
+    ex:hasName "Graduate 3: Backend Engineer" ;
     ex:hasApplicantType "Fresh Graduate" ;
     ex:hasEducation ex:Edu_Lina ;
     ex:hasExperience ex:Exp_Lina ;
@@ -531,8 +582,8 @@ ex:App_Lina rdf:type ex:Applicant ;
                ex:SQL .
 
 ex:App_Omar rdf:type ex:Applicant ;
-    rdfs:label "Omar Farhan bin Ali" ;
-    ex:hasName "Omar Farhan bin Ali" ;
+    rdfs:label "Graduate 4: Cybersecurity Specialist" ;
+    ex:hasName "Graduate 4: Cybersecurity Specialist" ;
     ex:hasApplicantType "Fresh Graduate" ;
     ex:hasEducation ex:Edu_Omar ;
     ex:hasExperience ex:Exp_Omar ;
@@ -542,8 +593,8 @@ ex:App_Omar rdf:type ex:Applicant ;
                ex:CloudComputingAWS .
 
 ex:App_Mei rdf:type ex:Applicant ;
-    rdfs:label "Mei Ling Chong" ;
-    ex:hasName "Mei Ling Chong" ;
+    rdfs:label "Student 5: Data Analysis Aspirant" ;
+    ex:hasName "Student 5: Data Analysis Aspirant" ;
     ex:hasApplicantType "IT Student" ;
     ex:hasEducation ex:Edu_Mei ;
     ex:hasSkill ex:Python ,
@@ -552,8 +603,8 @@ ex:App_Mei rdf:type ex:Applicant ;
                ex:NoSQL .
 
 ex:App_Tariq rdf:type ex:Applicant ;
-    rdfs:label "Tariq Hakim bin Ibrahim" ;
-    ex:hasName "Tariq Hakim bin Ibrahim" ;
+    rdfs:label "Graduate 6: Fullstack Developer" ;
+    ex:hasName "Graduate 6: Fullstack Developer" ;
     ex:hasApplicantType "Fresh Graduate" ;
     ex:hasEducation ex:Edu_Tariq ;
     ex:hasExperience ex:Exp_Tariq ;

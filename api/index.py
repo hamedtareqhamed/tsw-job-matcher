@@ -195,10 +195,20 @@ def get_predefined_profiles():
         for s_row in safe_query(skills_query):
             app_skills.append(str(s_row.skill).split("#")[-1])
             
+        p_name = str(row.name)
+        p_loc = "Kuala Lumpur"
+        if "Web Design" in p_name:
+            p_loc = "Petaling Jaya"
+        elif "Cybersecurity" in p_name:
+            p_loc = "Cyberjaya"
+        elif "Data Analysis" in p_name:
+            p_loc = "Penang"
+
         profiles.append({
             "id": str(app_uri).split("#")[-1],
-            "name": str(row.name),
+            "name": p_name,
             "type": str(row.type),
+            "location": p_loc,
             "degreeName": str(row.degreeName),
             "degreeLevel": str(row.degreeLevel),
             "fieldOfStudy": str(row.fieldOfStudy) if hasattr(row, 'fieldOfStudy') else "",
@@ -222,51 +232,193 @@ def calculate_matches(user_profile):
     jobs = get_jobs()
     match_results = []
     
+    # Semantic inference mapping (if user has subclass/specialized skill, infer the base skill)
     user_skills_set = set(user_profile.get("skills", []))
+    INFERRED_SKILLS = {
+        "React": {"JavaScript", "HTML", "CSS"},
+        "NodeJS": {"JavaScript"},
+        "DeepLearning": {"MachineLearning", "Python"},
+        "MachineLearning": {"Python", "DataAnalysis"},
+        "NLP": {"Python"},
+        "GitHub": {"Git"},
+        "Kubernetes": {"Docker"},
+        "PenetrationTesting": {"Cybersecurity"},
+    }
+    inferred_skills = set()
+    for skill in user_skills_set:
+        if skill in INFERRED_SKILLS:
+            inferred_skills.update(INFERRED_SKILLS[skill])
+            
+    expanded_user_skills = user_skills_set.union(inferred_skills)
     user_degree_level = user_profile.get("degreeLevel", "Bachelor")
+    user_location = user_profile.get("location", "Kuala Lumpur")
     
     all_skills = get_skills()
     skills_map = {s["id"]: s for s in all_skills}
     
+    # Job-specific Core Skills vs Secondary Skills
+    JOB_CORE_SKILLS = {
+        "AIEngineer": {"MachineLearning", "DeepLearning", "NLP"},
+        "DataScientist": {"MachineLearning", "DataAnalysis", "Python"},
+        "FrontendDeveloper": {"JavaScript", "React"},
+        "BackendDeveloper": {"Java", "NodeJS", "APIIntegration"},
+        "FullStackDeveloper": {"React", "NodeJS", "JavaScript"},
+        "CybersecurityAnalyst": {"Cybersecurity", "PenetrationTesting"},
+        "CloudArchitect": {"CloudComputingAWS", "Docker", "Kubernetes"},
+        "DevOpsEngineer": {"Docker", "Kubernetes", "CloudComputingAWS"},
+        "UXUIDesigner": {"HTML", "CSS"},
+        "DataEngineer": {"SQL", "DataAnalysis", "Python"},
+        "SystemAdministrator": {"Cybersecurity", "CloudComputingAWS"},
+        "MobileAppDeveloper": {"JavaScript", "React"},
+        "QAAutomationEngineer": {"Python", "JavaScript"},
+        "SoftwareTester": {"HTML", "CSS"}
+    }
+    
+    SKILL_COURSES = {
+        "Python": "Python for Everybody Specialization (Coursera)",
+        "MachineLearning": "Machine Learning Specialization by Andrew Ng (Coursera)",
+        "DeepLearning": "Deep Learning Specialization by DeepLearning.AI",
+        "NLP": "Natural Language Processing Specialization (Coursera)",
+        "DataAnalysis": "Google Data Analytics Professional Certificate",
+        "React": "React - The Complete Guide (Udemy)",
+        "NodeJS": "The Complete Node.js Developer Course (Udemy)",
+        "JavaScript": "Modern JavaScript From The Beginning",
+        "SQL": "SQL for Data Science (Coursera)",
+        "Cybersecurity": "Google Cybersecurity Professional Certificate",
+        "PenetrationTesting": "CompTIA PenTest+ Pathway",
+        "CloudComputingAWS": "AWS Certified Solutions Architect Course",
+        "Docker": "Docker Mastery on Udemy",
+        "Kubernetes": "Certified Kubernetes Administrator (CKA)",
+        "Git": "Git Complete: The Definitive Guide (Udemy)",
+        "GitHub": "GitHub Ultimate: Master Git and GitHub",
+        "APIIntegration": "REST APIs with Flask and Python",
+        "HTML": "HTML & CSS for Beginners",
+        "CSS": "CSS - The Complete Guide (Udemy)"
+    }
+    
+    KLANG_VALLEY_CITIES = {"Kuala Lumpur", "Petaling Jaya", "Cyberjaya"}
+    
     for job in jobs:
+        job_id = job["id"]
         job_skills_set = {s["id"] for s in job["skills"]}
         
-        # Intersection & difference
-        matched_ids = user_skills_set.intersection(job_skills_set)
-        missing_ids = job_skills_set.difference(user_skills_set)
+        core_set = JOB_CORE_SKILLS.get(job_id, set())
+        if not core_set:
+            core_set = set(list(job_skills_set)[:3])
+            
+        secondary_set = job_skills_set.difference(core_set)
         
-        matched_skills = [skills_map[sid] for sid in matched_ids if sid in skills_map]
-        missing_skills = [skills_map[sid] for sid in missing_ids if sid in skills_map]
+        matched_core = expanded_user_skills.intersection(core_set)
+        matched_secondary = expanded_user_skills.intersection(secondary_set)
         
-        # Match percentage
-        total_req_skills = len(job["skills"])
-        base_score = int((len(matched_skills) / total_req_skills) * 100) if total_req_skills > 0 else 0
+        missing_core = core_set.difference(expanded_user_skills)
+        missing_secondary = secondary_set.difference(expanded_user_skills)
         
-        # Experience bonus
-        score = base_score
-        exp_bonus_applied = False
-        if user_profile.get("experience") and user_profile["experience"].get("duration", 0) > 0:
-            score = min(base_score + 10, 100)
-            if score > base_score:
-                exp_bonus_applied = True
+        # Calculate base score based on weights: Core = 70%, Secondary = 30%
+        core_score = (len(matched_core) / len(core_set) * 70) if core_set else 70
+        secondary_score = (len(matched_secondary) / len(secondary_set) * 30) if secondary_set else 30
+        base_score = int(core_score + secondary_score)
         
-        # Education match check (Bachelor covers both, Diploma covers only Diploma)
-        job_req_edu = job["reqEdu"]
-        if job_req_edu == "Bachelor":
-            edu_match = (user_degree_level == "Bachelor")
+        # Core skills sanity check (Cannot be a Good Match without at least one core skill matched)
+        has_at_least_one_core = (len(matched_core) > 0) or (not core_set)
+        
+        # Experience level compatibility matching
+        cand_exp_months = user_profile.get("experience", {}).get("duration", 0) if user_profile.get("experience") else 0
+        
+        exp_match = True
+        exp_bonus = 0
+        exp_feedback = "Meets requirement"
+        if job["level"] == "Junior" and cand_exp_months < 12:
+            exp_match = False
+            exp_bonus = -10  # Penalty for junior roles requiring 1yr experience
+            exp_feedback = "Experience Gap (Requires 12+ months)"
+        elif cand_exp_months > 0:
+            exp_bonus = 10   # Bonus for having experience
+            exp_feedback = "Experience Match Bonus Applied (+10%)"
+            
+        # Location matching (Proximity / Commute matching)
+        job_loc_clean = job["location"].split(",")[0].strip()
+        cand_loc_clean = user_location.split(",")[0].strip()
+        
+        loc_score_modifier = 0
+        loc_feedback = "Perfect Match"
+        if cand_loc_clean == job_loc_clean:
+            loc_score_modifier = 0
+        elif cand_loc_clean in KLANG_VALLEY_CITIES and job_loc_clean in KLANG_VALLEY_CITIES:
+            loc_score_modifier = -5
+            loc_feedback = "Nearby Commute (Klang Valley)"
         else:
-            edu_match = True
+            loc_score_modifier = -20
+            loc_feedback = "Relocation Required"
+            
+        # Final Score
+        score = max(0, min(100, base_score + exp_bonus + loc_score_modifier))
+        
+        # Education match check
+        job_req_edu = job["reqEdu"]
+        edu_match = True
+        if job_req_edu == "Bachelor" and user_degree_level != "Bachelor":
+            edu_match = False
+            
+        # Actionable recommendations
+        recommendations = []
+        for skill_id in missing_core:
+            if skill_id in skills_map:
+                recommendations.append({
+                    "skill_label": skills_map[skill_id]["label"],
+                    "course": SKILL_COURSES.get(skill_id, "Online Tutorials & Certification Courses"),
+                    "type": "Core"
+                })
+        for skill_id in missing_secondary:
+            if skill_id in skills_map:
+                recommendations.append({
+                    "skill_label": skills_map[skill_id]["label"],
+                    "course": SKILL_COURSES.get(skill_id, "Online Tutorials & Certification Courses"),
+                    "type": "Secondary"
+                })
+                
+        # Match status
+        if not has_at_least_one_core:
+            status = "Core Skill Gap"
+        elif not edu_match:
+            status = "Education Mismatch"
+        elif score >= 75:
+            status = "Excellent Match"
+        elif score >= 50:
+            status = "Good Match"
+        else:
+            status = "Skill Gap"
+
+        matched_skills_list = []
+        for sid in expanded_user_skills.intersection(job_skills_set):
+            if sid in skills_map:
+                s_dict = dict(skills_map[sid])
+                s_dict["is_core"] = (sid in core_set)
+                matched_skills_list.append(s_dict)
+                
+        missing_skills_list = []
+        for sid in job_skills_set.difference(expanded_user_skills):
+            if sid in skills_map:
+                s_dict = dict(skills_map[sid])
+                s_dict["is_core"] = (sid in core_set)
+                missing_skills_list.append(s_dict)
             
         match_results.append({
             "job": job,
             "score": score,
-            "matched_skills": matched_skills,
-            "missing_skills": missing_skills,
+            "core_skills_count": len(core_set),
+            "matched_core_count": len(matched_core),
+            "secondary_skills_count": len(secondary_set),
+            "matched_secondary_count": len(matched_secondary),
+            "matched_skills": matched_skills_list,
+            "missing_skills": missing_skills_list,
             "edu_match": edu_match,
-            "exp_bonus_applied": exp_bonus_applied,
-            "status": "Excellent Match" if (score >= 75 and edu_match) else
-                      "Good Match" if (score >= 50 and edu_match) else
-                      "Education Mismatch" if (not edu_match) else "Skill Gap"
+            "exp_match": exp_match,
+            "exp_feedback": exp_feedback,
+            "loc_feedback": loc_feedback,
+            "loc_match_score": loc_score_modifier,
+            "recommendations": recommendations,
+            "status": status
         })
         
     match_results.sort(key=lambda x: (x["edu_match"], x["score"]), reverse=True)
@@ -294,6 +446,7 @@ def home():
         session["user_profile"] = {
             "name": request.form.get("name"),
             "type": request.form.get("type"),
+            "location": request.form.get("location", "Kuala Lumpur"),
             "degreeName": request.form.get("degreeName"),
             "degreeLevel": request.form.get("degreeLevel"),
             "fieldOfStudy": request.form.get("fieldOfStudy", ""),
@@ -362,6 +515,7 @@ def edit_profile():
         session["user_profile"] = {
             "name": request.form.get("name"),
             "type": request.form.get("type"),
+            "location": request.form.get("location", "Kuala Lumpur"),
             "degreeName": request.form.get("degreeName"),
             "degreeLevel": request.form.get("degreeLevel"),
             "fieldOfStudy": request.form.get("fieldOfStudy", ""),
@@ -403,6 +557,7 @@ def load_profile(profile_id):
             session["user_profile"] = {
                 "name": p["name"],
                 "type": p["type"],
+                "location": p.get("location", "Kuala Lumpur"),
                 "degreeName": p["degreeName"],
                 "degreeLevel": p["degreeLevel"],
                 "fieldOfStudy": p.get("fieldOfStudy", ""),

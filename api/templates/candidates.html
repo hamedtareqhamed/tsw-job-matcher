@@ -13,7 +13,7 @@
                     <div>
                         <h3 style="font-size: 1.25rem; font-weight: 700; color: var(--text-primary);">{{ cand.profile.name }}</h3>
                         <p style="font-size: 0.85rem; color: var(--text-secondary);">
-                            {{ cand.profile.degreeName }} in <strong>{{ cand.profile.fieldOfStudy }}</strong> ({{ cand.profile.institution }}) — <strong>Level: {{ cand.profile.degreeLevel }}</strong>
+                            {{ cand.profile.degreeName }} in <strong>{{ cand.profile.fieldOfStudy }}</strong> ({{ cand.profile.institution }}) — <strong>Level: {{ cand.profile.degreeLevel }}</strong> — <strong>📍 Preferred Location: {{ cand.profile.location }}</strong>
                         </p>
                         {% if cand.profile.experience %}
                             <div style="margin-top: 0.35rem; font-size: 0.8rem; color: var(--text-primary); display: flex; align-items: center; gap: 0.4rem; flex-wrap: wrap;">
@@ -60,12 +60,20 @@
                             </p>
                             
                             <!-- Skill overlaps in recommendation -->
-                            <div class="tag-container" style="margin-top: 0.5rem;">
+                            <div class="tag-container" style="margin-top: 0.5rem; display: flex; gap: 0.25rem; flex-wrap: wrap;">
                                 {% for ms in cand.best_match.matched_skills %}
-                                    <span class="tag tag-success" style="font-size: 0.7rem;">{{ ms.label }} (Matched)</span>
+                                    {% if ms.is_core %}
+                                        <span class="tag tag-success" style="font-size: 0.7rem; padding: 0.1rem 0.35rem; font-weight: 600;">★ {{ ms.label }} (Core)</span>
+                                    {% else %}
+                                        <span class="tag" style="font-size: 0.7rem; padding: 0.1rem 0.35rem; background-color: #e0f2fe; color: #0369a1; border-color: #bae6fd; font-weight: 500;">{{ ms.label }} (Bonus)</span>
+                                    {% endif %}
                                 {% endfor %}
                                 {% for ms in cand.best_match.missing_skills %}
-                                    <span class="tag tag-danger" style="font-size: 0.7rem;">{{ ms.label }} (Missing)</span>
+                                    {% if ms.is_core %}
+                                        <span class="tag tag-danger" style="font-size: 0.7rem; padding: 0.1rem 0.35rem; font-weight: 600;">⚠ {{ ms.label }} (Core Missing)</span>
+                                    {% else %}
+                                        <span class="tag" style="font-size: 0.7rem; padding: 0.1rem 0.35rem; background-color: #fffbeb; color: #b45309; border-color: #fde68a; font-weight: 500;">{{ ms.label }} (Bonus Missing)</span>
+                                    {% endif %}
                                 {% endfor %}
                             </div>
                         </div>
