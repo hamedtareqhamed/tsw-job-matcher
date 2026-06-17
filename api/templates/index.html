@@ -53,6 +53,16 @@
                     {% endif %}
                 </div>
             </div>
+
+            {% if user_profile.experience %}
+            <div style="border-top: 1px solid var(--border-color); padding-top: 0.75rem; margin-top: 0.75rem;">
+                <div class="profile-label" style="margin-bottom: 0.25rem;">Work/Internship Experience</div>
+                <div style="font-size: 0.9rem; color: var(--text-primary); display: flex; align-items: center; gap: 0.4rem; flex-wrap: wrap;">
+                    <span class="badge badge-blue" style="font-size: 0.75rem; padding: 0.15rem 0.45rem;">{{ user_profile.experience.type }}</span>
+                    <strong>{{ user_profile.experience.role }}</strong> at <em>{{ user_profile.experience.org }}</em> ({{ user_profile.experience.duration }} months)
+                </div>
+            </div>
+            {% endif %}
         </div>
     </div>
 

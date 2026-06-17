@@ -152,7 +152,7 @@ def get_predefined_profiles():
     query = """
     PREFIX ex: <http://example.org/jobmatch#>
     PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-    SELECT ?applicant ?name ?type ?degreeName ?degreeLevel ?institution ?gradYear
+    SELECT ?applicant ?name ?type ?degreeName ?degreeLevel ?institution ?gradYear ?expRole ?expOrg ?expDuration ?expType
     WHERE {
         ?applicant rdf:type ex:Applicant ;
                    ex:hasName ?name ;
@@ -162,6 +162,13 @@ def get_predefined_profiles():
              ex:hasDegreeLevel ?degreeLevel ;
              ex:hasInstitution ?institution ;
              ex:hasGraduationYear ?gradYear .
+        OPTIONAL {
+            ?applicant ex:hasExperience ?exp .
+            ?exp ex:hasRole ?expRole ;
+                 ex:hasOrganisation ?expOrg ;
+                 ex:hasDurationMonths ?expDuration ;
+                 ex:hasExperienceType ?expType .
+        }
     }
     ORDER BY ?name
     """
@@ -193,7 +200,13 @@ def get_predefined_profiles():
             "degreeLevel": str(row.degreeLevel),
             "institution": str(row.institution),
             "gradYear": int(row.gradYear),
-            "skills": app_skills
+            "skills": app_skills,
+            "experience": {
+                "role": str(row.expRole),
+                "org": str(row.expOrg),
+                "duration": int(row.expDuration) if row.expDuration else 0,
+                "type": str(row.expType)
+            } if row.expRole else None
         })
     return profiles
 
@@ -359,7 +372,8 @@ def load_profile(profile_id):
                 "degreeLevel": p["degreeLevel"],
                 "institution": p["institution"],
                 "gradYear": p["gradYear"],
-                "skills": p["skills"]
+                "skills": p["skills"],
+                "experience": p.get("experience")
             }
             session.modified = True
             break

@@ -15,6 +15,12 @@
                         <p style="font-size: 0.85rem; color: var(--text-secondary);">
                             {{ cand.profile.degreeName }} ({{ cand.profile.institution }}) — <strong>Level: {{ cand.profile.degreeLevel }}</strong>
                         </p>
+                        {% if cand.profile.experience %}
+                            <div style="margin-top: 0.35rem; font-size: 0.8rem; color: var(--text-primary); display: flex; align-items: center; gap: 0.4rem; flex-wrap: wrap;">
+                                <span class="badge badge-blue" style="font-size: 0.7rem; padding: 0.1rem 0.35rem;">{{ cand.profile.experience.type }}</span>
+                                <span><strong>{{ cand.profile.experience.role }}</strong> at <em>{{ cand.profile.experience.org }}</em> ({{ cand.profile.experience.duration }} months)</span>
+                            </div>
+                        {% endif %}
                     </div>
                     <a href="{{ url_for('load_profile', profile_id=cand.profile.id) }}" class="btn-primary" style="padding: 0.4rem 0.85rem; font-size: 0.8rem;">
                         Load Profile
