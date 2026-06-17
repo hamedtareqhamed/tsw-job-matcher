@@ -3,6 +3,7 @@ from flask import Flask, render_template, request, redirect, url_for, session
 import rdflib
 from rdflib import Namespace
 import threading
+import time
 
 app = Flask(__name__)
 app.secret_key = "job_matching_session_key"
@@ -136,22 +137,29 @@ def get_jobs():
     for row in results:
         job_uri = row.job
         
-        # Get required skills
+        # Get required skills (including core skills)
         skills_query = """
         PREFIX ex: <http://example.org/jobmatch#>
         PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-        SELECT ?skill ?label
+        SELECT ?skill ?label ?isCore
         WHERE {
-            <%s> ex:requiresSkill ?skill .
+            {
+                <%s> ex:requiresSkill ?skill .
+                BIND(false AS ?isCore)
+            } UNION {
+                <%s> ex:requiresCoreSkill ?skill .
+                BIND(true AS ?isCore)
+            }
             ?skill rdfs:label ?label .
         }
-        """ % job_uri
+        """ % (job_uri, job_uri)
         
         job_skills = []
         for s_row in safe_query(skills_query):
             job_skills.append({
                 "id": str(s_row.skill).split("#")[-1],
-                "label": str(s_row.label)
+                "label": str(s_row.label),
+                "isCore": bool(s_row.isCore)
             })
             
         jobs.append({
@@ -318,7 +326,12 @@ def calculate_matches(user_profile):
         job_id = job["id"]
         job_skills_set = {s["id"] for s in job["skills"]}
         
-        core_set = JOB_CORE_SKILLS.get(job_id, set())
+        ontology_core_set = {s["id"] for s in job["skills"] if s.get("isCore")}
+        if ontology_core_set:
+            core_set = ontology_core_set
+        else:
+            core_set = JOB_CORE_SKILLS.get(job_id, set())
+            
         if not core_set:
             core_set = set(list(job_skills_set)[:3])
             
@@ -626,6 +639,74 @@ LIMIT 5"""
 def reset_profile():
     session.clear()
     return redirect(url_for("home"))
+
+@app.route("/post_job", methods=["GET", "POST"])
+def post_job():
+    if request.method == "POST":
+        company_option = request.form.get("company_option")
+        
+        # 1. Determine Company URI
+        if company_option == "existing":
+            comp_id = request.form.get("existing_company")
+            company_uri = EX[comp_id]
+        else:
+            comp_name = request.form.get("company_name", "New Company").strip()
+            comp_loc = request.form.get("company_location", "Kuala Lumpur").strip()
+            comp_ind = request.form.get("company_industry", "Technology").strip()
+            
+            # Generate ID slug
+            comp_slug = "".join(x for x in comp_name if x.isalnum())
+            if not comp_slug:
+                comp_slug = "Company_" + str(int(time.time()))
+            company_uri = EX[comp_slug]
+            
+            # Add company to RDF Graph
+            g.add((company_uri, rdflib.RDF.type, EX.Company))
+            g.add((company_uri, rdflib.RDFS.label, rdflib.Literal(comp_name)))
+            g.add((company_uri, EX.hasLocation, rdflib.Literal(comp_loc)))
+            g.add((company_uri, EX.hasIndustry, rdflib.Literal(comp_ind)))
+            
+        # 2. Determine Job URI and details
+        job_title = request.form.get("job_title", "Software Engineer").strip()
+        job_level = request.form.get("job_level", "Entry-Level")
+        req_edu = request.form.get("req_edu", "Bachelor")
+        
+        job_slug = "".join(x for x in job_title if x.isalnum()) + "_" + str(int(time.time()))
+        job_uri = EX[job_slug]
+        
+        # Add Job to RDF Graph
+        g.add((job_uri, rdflib.RDF.type, EX.Job))
+        g.add((job_uri, rdflib.RDFS.label, rdflib.Literal(job_title)))
+        g.add((job_uri, EX.offeredBy, company_uri))
+        g.add((job_uri, EX.hasJobLevel, rdflib.Literal(job_level)))
+        g.add((job_uri, EX.hasRequiredDegreeLevel, rdflib.Literal(req_edu)))
+        
+        # 3. Add Skills
+        # Form inputs: core_skills and secondary_skills (comma separated string of IDs)
+        core_skills_str = request.form.get("core_skills", "")
+        secondary_skills_str = request.form.get("secondary_skills", "")
+        
+        core_skills = [s.strip() for s in core_skills_str.split(",") if s.strip()]
+        secondary_skills = [s.strip() for s in secondary_skills_str.split(",") if s.strip()]
+        
+        for s_id in core_skills:
+            g.add((job_uri, EX.requiresCoreSkill, EX[s_id]))
+                
+        for s_id in secondary_skills:
+            g.add((job_uri, EX.requiresSkill, EX[s_id]))
+                
+        # 4. Serialize / Save changes back to .ttl file
+        g.serialize(ONTOLOGY_PATH, format="turtle")
+        
+        return redirect(url_for("candidates")) # Redirect to the graduates/jobs list page to see it!
+        
+    companies = get_companies()
+    return render_template(
+        "post_job.html", 
+        companies=companies, 
+        skills_with_tags=get_skills_with_tags(), 
+        active_page="post_job"
+    )
 
 if __name__ == "__main__":
     app.run(debug=True, host="0.0.0.0", port=5000)

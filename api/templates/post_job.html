@@ -1,0 +1,330 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>Post a Job Request</h1>
+    <p class="subtitle">Create a new IT job opening in the ontology system. Candidates will be matched dynamically based on your requirements.</p>
+
+    <div class="glass-panel" style="max-width: 900px; margin-bottom: 2rem;">
+        <form action="{{ url_for('post_job') }}" method="POST" id="post-job-form">
+            <!-- SECTION 1: COMPANY INFO -->
+            <h3 class="section-title">
+                <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                </svg>
+                Company Details
+            </h3>
+            
+            <div class="form-group" style="margin-bottom: 1.5rem;">
+                <label class="form-label" style="margin-bottom: 0.5rem; display: block;">Company Mode</label>
+                <div style="display: flex; gap: 1rem; align-items: center;">
+                    <label style="cursor: pointer; display: flex; align-items: center; gap: 0.35rem; font-size: 0.9rem; color: var(--text-primary);">
+                        <input type="radio" name="company_option" value="existing" checked onclick="toggleCompanyMode('existing')" style="accent-color: var(--primary-color);"> Select Existing Company
+                    </label>
+                    <label style="cursor: pointer; display: flex; align-items: center; gap: 0.35rem; font-size: 0.9rem; color: var(--text-primary);">
+                        <input type="radio" name="company_option" value="new" onclick="toggleCompanyMode('new')" style="accent-color: var(--primary-color);"> Register New Company
+                    </label>
+                </div>
+            </div>
+
+            <!-- Existing Company Select -->
+            <div id="company-existing-sec" class="form-group" style="margin-bottom: 1.5rem;">
+                <label class="form-label">Select Company</label>
+                <select name="existing_company" class="form-input" style="cursor: pointer;">
+                    {% for comp in companies %}
+                        <option value="{{ comp.id }}">{{ comp.name }} ({{ comp.location }})</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- New Company Inputs -->
+            <div id="company-new-sec" style="display: none; transition: all 0.3s ease;">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Company Name</label>
+                        <input type="text" id="company_name" name="company_name" class="form-input" placeholder="e.g. InnovateTech Solutions">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Headquarters / Location</label>
+                        <input type="text" id="company_location" name="company_location" class="form-input" placeholder="e.g. Cyberjaya, Malaysia">
+                    </div>
+                </div>
+                <div class="form-group" style="margin-bottom: 1.5rem;">
+                    <label class="form-label">Industry Sector</label>
+                    <input type="text" id="company_industry" name="company_industry" class="form-input" placeholder="e.g. AI, Software Development, Cybersecurity">
+                </div>
+            </div>
+
+            <!-- SECTION 2: JOB DETAILS -->
+            <h3 class="section-title" style="margin-top: 2rem;">
+                <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                </svg>
+                Job Description
+            </h3>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">Job Title</label>
+                    <input type="text" name="job_title" class="form-input" placeholder="e.g. Senior Frontend Architect" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Job Level</label>
+                    <select name="job_level" class="form-input" style="cursor: pointer;">
+                        <option value="Entry-Level">Entry-Level</option>
+                        <option value="Junior">Junior</option>
+                        <option value="Mid-Level">Mid-Level</option>
+                        <option value="Senior">Senior</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-row" style="margin-bottom: 1.5rem;">
+                <div class="form-group" style="max-width: 50%;">
+                    <label class="form-label">Required Education Level</label>
+                    <select name="req_edu" class="form-input" style="cursor: pointer;">
+                        <option value="Bachelor">Bachelor Degree</option>
+                        <option value="Diploma">Diploma</option>
+                        <option value="Master">Master Degree</option>
+                        <option value="PhD">PhD</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- SECTION 3: SKILLS SELECT -->
+            <h3 class="section-title" style="margin-top: 2rem;">
+                <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                </svg>
+                Skills & Core Preferences
+            </h3>
+            <p style="color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 1rem;">
+                Select technical skills required for this job. For selected skills, click the toggle badge to mark them as <b>Core Skills</b> (70% weight) vs <b>Secondary Skills</b> (30% weight).
+            </p>
+
+            <!-- Search -->
+            <div style="margin-bottom: 1rem;">
+                <input type="text" id="search-skills" onkeyup="renderSkillsGrid()" placeholder="🔎 Search skills by name or category..." style="width: 100%; padding: 0.75rem; border: 1px solid var(--border-color); border-radius: 8px; font-size: 0.9rem; outline: none; transition: border-color 0.2s; box-sizing: border-box;" onfocus="this.style.borderColor='var(--primary-color)'" onblur="this.style.borderColor='var(--border-color)'">
+            </div>
+
+            <!-- Category Filter Tabs -->
+            <div class="category-tabs" style="display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1.25rem;">
+                <button type="button" class="tab-btn active" onclick="setCategory('all', this)" style="background-color: var(--primary-color); color: white; border: 1px solid var(--primary-color); padding: 0.35rem 0.8rem; border-radius: 20px; cursor: pointer; font-size: 0.8rem; font-weight: 500; transition: all 0.2s; outline: none;">All</button>
+                <button type="button" class="tab-btn" onclick="setCategory('Programming Language', this)" style="background-color: rgba(255, 255, 255, 0.5); color: var(--text-secondary); border: 1px solid var(--border-color); padding: 0.35rem 0.8rem; border-radius: 20px; cursor: pointer; font-size: 0.8rem; font-weight: 500; transition: all 0.2s; outline: none;">Programming Languages</button>
+                <button type="button" class="tab-btn" onclick="setCategory('AI and Data Science Skill', this)" style="background-color: rgba(255, 255, 255, 0.5); color: var(--text-secondary); border: 1px solid var(--border-color); padding: 0.35rem 0.8rem; border-radius: 20px; cursor: pointer; font-size: 0.8rem; font-weight: 500; transition: all 0.2s; outline: none;">AI & Data Science</button>
+                <button type="button" class="tab-btn" onclick="setCategory('Web and Cloud Technology Skill', this)" style="background-color: rgba(255, 255, 255, 0.5); color: var(--text-secondary); border: 1px solid var(--border-color); padding: 0.35rem 0.8rem; border-radius: 20px; cursor: pointer; font-size: 0.8rem; font-weight: 500; transition: all 0.2s; outline: none;">Web & Cloud</button>
+                <button type="button" class="tab-btn" onclick="setCategory('Cybersecurity Skill', this)" style="background-color: rgba(255, 255, 255, 0.5); color: var(--text-secondary); border: 1px solid var(--border-color); padding: 0.35rem 0.8rem; border-radius: 20px; cursor: pointer; font-size: 0.8rem; font-weight: 500; transition: all 0.2s; outline: none;">Cybersecurity</button>
+                <button type="button" class="tab-btn" onclick="setCategory('Development Tool Skill', this)" style="background-color: rgba(255, 255, 255, 0.5); color: var(--text-secondary); border: 1px solid var(--border-color); padding: 0.35rem 0.8rem; border-radius: 20px; cursor: pointer; font-size: 0.8rem; font-weight: 500; transition: all 0.2s; outline: none;">Dev Tools & Systems</button>
+            </div>
+
+            <!-- Skill Cards Grid -->
+            <div id="skills-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 0.75rem; max-height: 320px; overflow-y: auto; padding-right: 0.5rem; padding-bottom: 0.5rem;">
+                <!-- JS populated -->
+            </div>
+
+            <!-- Hidden Inputs for selected skills -->
+            <input type="hidden" name="core_skills" id="core-skills-input" value="">
+            <input type="hidden" name="secondary_skills" id="secondary-skills-input" value="">
+
+            <!-- Form Actions -->
+            <div style="border-top: 1px solid var(--border-color); padding-top: 1.5rem; margin-top: 2rem; display: flex; justify-content: flex-end; gap: 1rem;">
+                <a href="{{ url_for('home') }}" class="btn-primary" style="background-color: var(--border-color); color: var(--text-primary); border: 1px solid var(--border-color); text-decoration: none; display: flex; align-items: center; justify-content: center; height: 42px; padding: 0 1.5rem; border-radius: 8px; font-weight: 600; font-size: 0.9rem; box-sizing: border-box;">
+                    Cancel
+                </a>
+                <button type="submit" class="btn-primary" style="height: 42px; display: flex; align-items: center; justify-content: center; font-size: 0.9rem; font-weight: 600; padding: 0 1.5rem;">
+                    Publish Job & Match ✓
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Scripts for toggling and selection -->
+    <script>
+        function toggleCompanyMode(mode) {
+            const extSec = document.getElementById('company-existing-sec');
+            const newSec = document.getElementById('company-new-sec');
+            
+            const nameInput = document.getElementById('company_name');
+            const locInput = document.getElementById('company_location');
+            const indInput = document.getElementById('company_industry');
+
+            if (mode === 'existing') {
+                extSec.style.display = 'block';
+                newSec.style.display = 'none';
+                nameInput.removeAttribute('required');
+                locInput.removeAttribute('required');
+            } else {
+                extSec.style.display = 'none';
+                newSec.style.display = 'block';
+                nameInput.setAttribute('required', 'true');
+                locInput.setAttribute('required', 'true');
+            }
+        }
+
+        // Skills logic
+        const ALL_SKILLS = {{ skills_with_tags | tojson }};
+        let selectedCore = new Set();
+        let selectedSecondary = new Set();
+        let activeCategory = 'all';
+
+        function setCategory(cat, btn) {
+            activeCategory = cat;
+            document.querySelectorAll('.category-tabs .tab-btn').forEach(b => {
+                b.classList.remove('active');
+                b.style.backgroundColor = 'rgba(255, 255, 255, 0.5)';
+                b.style.color = 'var(--text-secondary)';
+                b.style.borderColor = 'var(--border-color)';
+            });
+            btn.classList.add('active');
+            btn.style.backgroundColor = 'var(--primary-color)';
+            btn.style.color = 'white';
+            btn.style.borderColor = 'var(--primary-color)';
+            
+            renderSkillsGrid();
+        }
+
+        function toggleSkillSelect(skillId) {
+            if (selectedCore.has(skillId)) {
+                selectedCore.delete(skillId);
+            } else if (selectedSecondary.has(skillId)) {
+                selectedSecondary.delete(skillId);
+            } else {
+                // Add to secondary by default
+                selectedSecondary.add(skillId);
+            }
+            updateHiddenInputs();
+            renderSkillsGrid();
+        }
+
+        function toggleSkillImportance(skillId, event) {
+            event.stopPropagation(); // Avoid triggering card selection click
+            if (selectedSecondary.has(skillId)) {
+                selectedSecondary.delete(skillId);
+                selectedCore.add(skillId);
+            } else if (selectedCore.has(skillId)) {
+                selectedCore.delete(skillId);
+                selectedSecondary.add(skillId);
+            }
+            updateHiddenInputs();
+            renderSkillsGrid();
+        }
+
+        function updateHiddenInputs() {
+            document.getElementById('core-skills-input').value = Array.from(selectedCore).join(',');
+            document.getElementById('secondary-skills-input').value = Array.from(selectedSecondary).join(',');
+        }
+
+        function renderSkillsGrid() {
+            const query = document.getElementById('search-skills').value.trim().toLowerCase();
+            const grid = document.getElementById('skills-grid');
+            grid.innerHTML = '';
+
+            const scoredSkills = ALL_SKILLS.map(skill => {
+                let scoreMatch = 0;
+                const labelLower = skill.label.toLowerCase();
+                
+                if (query === '') {
+                    scoreMatch = 1;
+                } else if (labelLower.startsWith(query)) {
+                    scoreMatch = 1000;
+                } else if (labelLower.includes(query)) {
+                    scoreMatch = 500;
+                } else {
+                    const matchesCat = skill.categories.some(cat => cat.toLowerCase().includes(query));
+                    if (matchesCat) {
+                        scoreMatch = 200;
+                    } else {
+                        scoreMatch = 0;
+                    }
+                }
+                return { skill, scoreMatch };
+            });
+
+            // Filter
+            const filteredSkills = scoredSkills.filter(x => {
+                if (x.scoreMatch === 0) return false;
+                if (activeCategory !== 'all' && !x.skill.categories.includes(activeCategory)) return false;
+                return true;
+            });
+
+            // Sort alphabetical
+            filteredSkills.sort((a, b) => a.skill.label.localeCompare(b.skill.label));
+
+            // Render
+            filteredSkills.forEach(({ skill }) => {
+                const isCore = selectedCore.has(skill.id);
+                const isSec = selectedSecondary.has(skill.id);
+                const isSelected = isCore || isSec;
+
+                const card = document.createElement('div');
+                card.className = `skill-card ${isSelected ? 'selected' : ''}`;
+                card.setAttribute('onclick', `toggleSkillSelect('${skill.id}')`);
+                
+                card.style.cssText = `
+                    border: 1px solid ${isSelected ? 'var(--primary-color)' : 'var(--border-color)'};
+                    background-color: ${isSelected ? 'rgba(59, 130, 246, 0.08)' : 'rgba(255, 255, 255, 0.4)'};
+                    color: ${isSelected ? 'var(--primary-color)' : 'var(--text-primary)'};
+                    border-radius: 8px;
+                    padding: 0.6rem;
+                    cursor: pointer;
+                    transition: all 0.2s;
+                    display: flex;
+                    flex-direction: column;
+                    gap: 0.35rem;
+                    position: relative;
+                `;
+
+                const labelDiv = document.createElement('div');
+                labelDiv.innerText = skill.label;
+                labelDiv.style.cssText = `font-weight: 600; font-size: 0.85rem; padding-right: 3.5rem;`;
+                card.appendChild(labelDiv);
+
+                // Add Core/Secondary toggle pill if selected
+                if (isSelected) {
+                    const pill = document.createElement('button');
+                    pill.type = 'button';
+                    pill.innerText = isCore ? 'Core' : 'Bonus';
+                    pill.setAttribute('onclick', `toggleSkillImportance('${skill.id}', event)`);
+                    
+                    pill.style.cssText = `
+                        position: absolute;
+                        top: 0.5rem;
+                        right: 0.5rem;
+                        border: none;
+                        font-size: 0.65rem;
+                        font-weight: 700;
+                        padding: 0.15rem 0.4rem;
+                        border-radius: 12px;
+                        cursor: pointer;
+                        transition: all 0.2s;
+                        background-color: ${isCore ? 'var(--primary-color)' : 'var(--text-secondary)'};
+                        color: white;
+                        outline: none;
+                    `;
+                    card.appendChild(pill);
+                }
+
+                const tagsContainer = document.createElement('div');
+                tagsContainer.style.cssText = `display: flex; flex-wrap: wrap; gap: 0.25rem;`;
+                skill.categories.forEach(cat => {
+                    const badge = document.createElement('span');
+                    badge.innerText = cat.replace(" Skill", "").replace(" Technology", "");
+                    badge.style.cssText = `
+                        font-size: 0.65rem;
+                        background-color: ${isSelected ? 'rgba(59, 130, 246, 0.15)' : 'var(--border-color)'};
+                        color: ${isSelected ? 'var(--primary-color)' : 'var(--text-secondary)'};
+                        padding: 0.1rem 0.35rem;
+                        border-radius: 4px;
+                    `;
+                    tagsContainer.appendChild(badge);
+                });
+                card.appendChild(tagsContainer);
+                grid.appendChild(card);
+            });
+        }
+
+        // Initialize grid on load
+        window.addEventListener('DOMContentLoaded', () => {
+            renderSkillsGrid();
+        });
+    </script>
+{% endblock %}
