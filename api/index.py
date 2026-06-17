@@ -102,7 +102,7 @@ def get_jobs():
     query = """
     PREFIX ex: <http://example.org/jobmatch#>
     PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-    SELECT ?job ?label ?compLabel ?level ?reqEdu ?location
+    SELECT ?job ?label ?compLabel ?level ?reqEdu ?location ?industry
     WHERE {
         ?job rdf:type ex:Job ;
              rdfs:label ?label ;
@@ -110,7 +110,8 @@ def get_jobs():
              ex:hasJobLevel ?level ;
              ex:hasRequiredDegreeLevel ?reqEdu .
         ?company rdfs:label ?compLabel ;
-                 ex:hasLocation ?location .
+                 ex:hasLocation ?location ;
+                 ex:hasIndustry ?industry .
     }
     ORDER BY ?label
     """
@@ -142,6 +143,7 @@ def get_jobs():
             "title": str(row.label),
             "company": str(row.compLabel),
             "location": str(row.location),
+            "industry": str(row.industry) if hasattr(row, 'industry') else "",
             "level": str(row.level),
             "reqEdu": str(row.reqEdu),
             "skills": job_skills
@@ -152,7 +154,7 @@ def get_predefined_profiles():
     query = """
     PREFIX ex: <http://example.org/jobmatch#>
     PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-    SELECT ?applicant ?name ?type ?degreeName ?degreeLevel ?institution ?gradYear ?expRole ?expOrg ?expDuration ?expType
+    SELECT ?applicant ?name ?type ?degreeName ?degreeLevel ?fieldOfStudy ?institution ?gradYear ?expRole ?expOrg ?expDuration ?expType
     WHERE {
         ?applicant rdf:type ex:Applicant ;
                    ex:hasName ?name ;
@@ -160,6 +162,7 @@ def get_predefined_profiles():
                    ex:hasEducation ?edu .
         ?edu ex:hasDegreeName ?degreeName ;
              ex:hasDegreeLevel ?degreeLevel ;
+             ex:hasFieldOfStudy ?fieldOfStudy ;
              ex:hasInstitution ?institution ;
              ex:hasGraduationYear ?gradYear .
         OPTIONAL {
@@ -198,6 +201,7 @@ def get_predefined_profiles():
             "type": str(row.type),
             "degreeName": str(row.degreeName),
             "degreeLevel": str(row.degreeLevel),
+            "fieldOfStudy": str(row.fieldOfStudy) if hasattr(row, 'fieldOfStudy') else "",
             "institution": str(row.institution),
             "gradYear": int(row.gradYear),
             "skills": app_skills,
@@ -236,7 +240,15 @@ def calculate_matches(user_profile):
         
         # Match percentage
         total_req_skills = len(job["skills"])
-        score = int((len(matched_skills) / total_req_skills) * 100) if total_req_skills > 0 else 0
+        base_score = int((len(matched_skills) / total_req_skills) * 100) if total_req_skills > 0 else 0
+        
+        # Experience bonus
+        score = base_score
+        exp_bonus_applied = False
+        if user_profile.get("experience") and user_profile["experience"].get("duration", 0) > 0:
+            score = min(base_score + 10, 100)
+            if score > base_score:
+                exp_bonus_applied = True
         
         # Education match check (Bachelor covers both, Diploma covers only Diploma)
         job_req_edu = job["reqEdu"]
@@ -251,6 +263,7 @@ def calculate_matches(user_profile):
             "matched_skills": matched_skills,
             "missing_skills": missing_skills,
             "edu_match": edu_match,
+            "exp_bonus_applied": exp_bonus_applied,
             "status": "Excellent Match" if (score >= 75 and edu_match) else
                       "Good Match" if (score >= 50 and edu_match) else
                       "Education Mismatch" if (not edu_match) else "Skill Gap"
@@ -269,14 +282,25 @@ def home():
     
     if request.method == "POST":
         selected_skills = request.form.getlist("skills")
+        exp_type = request.form.get("exp_type", "None")
+        exp_data = None
+        if exp_type != "None":
+            exp_data = {
+                "type": exp_type,
+                "role": request.form.get("exp_role", ""),
+                "org": request.form.get("exp_org", ""),
+                "duration": int(request.form.get("exp_duration")) if request.form.get("exp_duration") else 0
+            }
         session["user_profile"] = {
             "name": request.form.get("name"),
             "type": request.form.get("type"),
             "degreeName": request.form.get("degreeName"),
             "degreeLevel": request.form.get("degreeLevel"),
+            "fieldOfStudy": request.form.get("fieldOfStudy", ""),
             "institution": request.form.get("institution"),
             "gradYear": int(request.form.get("gradYear")),
-            "skills": selected_skills
+            "skills": selected_skills,
+            "experience": exp_data
         }
         session.modified = True
         return redirect(url_for("home"))
@@ -326,14 +350,25 @@ def edit_profile():
         
     if request.method == "POST":
         selected_skills = request.form.getlist("skills")
+        exp_type = request.form.get("exp_type", "None")
+        exp_data = None
+        if exp_type != "None":
+            exp_data = {
+                "type": exp_type,
+                "role": request.form.get("exp_role", ""),
+                "org": request.form.get("exp_org", ""),
+                "duration": int(request.form.get("exp_duration")) if request.form.get("exp_duration") else 0
+            }
         session["user_profile"] = {
             "name": request.form.get("name"),
             "type": request.form.get("type"),
             "degreeName": request.form.get("degreeName"),
             "degreeLevel": request.form.get("degreeLevel"),
+            "fieldOfStudy": request.form.get("fieldOfStudy", ""),
             "institution": request.form.get("institution"),
             "gradYear": int(request.form.get("gradYear")),
-            "skills": selected_skills
+            "skills": selected_skills,
+            "experience": exp_data
         }
         session.modified = True
         return redirect(url_for("home"))
@@ -370,6 +405,7 @@ def load_profile(profile_id):
                 "type": p["type"],
                 "degreeName": p["degreeName"],
                 "degreeLevel": p["degreeLevel"],
+                "fieldOfStudy": p.get("fieldOfStudy", ""),
                 "institution": p["institution"],
                 "gradYear": p["gradYear"],
                 "skills": p["skills"],
@@ -379,9 +415,47 @@ def load_profile(profile_id):
             break
     return redirect(url_for("home"))
 
-@app.route("/model")
+@app.route("/model", methods=["GET", "POST"])
 def semantic_model():
-    return render_template("semantic_model.html", active_page="model")
+    query_str = request.form.get("query")
+    results = None
+    error = None
+    variables = []
+    
+    # Default query for the user to see
+    if not query_str:
+        query_str = """PREFIX ex: <http://example.org/jobmatch#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+
+SELECT ?jobLabel ?companyLabel ?level
+WHERE {
+    ?job rdf:type ex:Job ;
+         rdfs:label ?jobLabel ;
+         ex:offeredBy ?company ;
+         ex:hasJobLevel ?level .
+    ?company rdfs:label ?companyLabel .
+}
+LIMIT 5"""
+        
+    if request.method == "POST":
+        try:
+            raw_res = safe_query(query_str)
+            variables = [str(var) for var in raw_res.vars] if hasattr(raw_res, 'vars') else []
+            results = []
+            for row in raw_res:
+                results.append([str(val) for val in row])
+        except Exception as e:
+            error = str(e)
+            
+    return render_template(
+        "semantic_model.html", 
+        active_page="model", 
+        query=query_str, 
+        results=results, 
+        error=error,
+        variables=variables
+    )
 
 @app.route("/reset")
 def reset_profile():

@@ -33,12 +33,16 @@
                     <input type="text" name="degreeName" class="form-input" value="{{ user_profile.degreeName }}" required>
                 </div>
                 <div class="form-group">
-                    <label class="form-label">Institution</label>
-                    <input type="text" name="institution" class="form-input" value="{{ user_profile.institution }}" required>
+                    <label class="form-label">Field of Study</label>
+                    <input type="text" name="fieldOfStudy" class="form-input" value="{{ user_profile.fieldOfStudy }}" required>
                 </div>
             </div>
 
             <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">Institution</label>
+                    <input type="text" name="institution" class="form-input" value="{{ user_profile.institution }}" required>
+                </div>
                 <div class="form-group">
                     <label class="form-label">Degree level</label>
                     <select name="degreeLevel" class="form-input" style="cursor: pointer;">
@@ -46,11 +50,69 @@
                         <option value="Diploma" {% if user_profile.degreeLevel == 'Diploma' %}selected{% endif %}>Diploma</option>
                     </select>
                 </div>
+            </div>
+
+            <div class="form-row">
                 <div class="form-group">
                     <label class="form-label">Graduation Year</label>
                     <input type="number" name="gradYear" class="form-input" value="{{ user_profile.gradYear }}" required>
                 </div>
+                <div class="form-group">
+                </div>
             </div>
+
+            <h3 class="section-title" style="margin-top: 2rem;">
+                <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                </svg>
+                Work & Internship Experience
+            </h3>
+            
+            {% set has_exp = user_profile.experience is not none %}
+            {% set exp_type = user_profile.experience.type if has_exp else 'None' %}
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">Experience Type</label>
+                    <select name="exp_type" id="exp_type_select" class="form-input" style="cursor: pointer;" onchange="toggleExperienceFields()">
+                        <option value="None" {% if exp_type == 'None' %}selected{% endif %}>No Experience</option>
+                        <option value="Internship" {% if exp_type == 'Internship' %}selected{% endif %}>Internship</option>
+                        <option value="Freelance" {% if exp_type == 'Freelance' %}selected{% endif %}>Freelance</option>
+                        <option value="Part-time" {% if exp_type == 'Part-time' %}selected{% endif %}>Part-time</option>
+                        <option value="Full-time" {% if exp_type == 'Full-time' %}selected{% endif %}>Full-time</option>
+                    </select>
+                </div>
+                <div class="form-group experience-field" style="display: {% if exp_type == 'None' %}none{% else %}block{% endif %};">
+                    <label class="form-label">Job Role / Title</label>
+                    <input type="text" name="exp_role" class="form-input" value="{{ user_profile.experience.role if has_exp else '' }}" placeholder="e.g. AI Research Intern" {% if exp_type != 'None' %}required{% endif %}>
+                </div>
+            </div>
+
+            <div class="form-row experience-field" style="display: {% if exp_type == 'None' %}none{% else %}block{% endif %};">
+                <div class="form-group">
+                    <label class="form-label">Organisation / Company</label>
+                    <input type="text" name="exp_org" class="form-input" value="{{ user_profile.experience.org if has_exp else '' }}" placeholder="e.g. TechNova Solutions" {% if exp_type != 'None' %}required{% endif %}>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Duration (Months)</label>
+                    <input type="number" name="exp_duration" class="form-input" value="{{ user_profile.experience.duration if has_exp else '' }}" placeholder="e.g. 3" min="0" {% if exp_type != 'None' %}required{% endif %}>
+                </div>
+            </div>
+
+            <script>
+                function toggleExperienceFields() {
+                    var select = document.getElementById('exp_type_select');
+                    var fields = document.querySelectorAll('.experience-field');
+                    fields.forEach(function(el) {
+                        if (select.value === 'None') {
+                            el.style.display = 'none';
+                            el.querySelectorAll('input').forEach(i => i.removeAttribute('required'));
+                        } else {
+                            el.style.display = '';
+                            el.querySelectorAll('input').forEach(i => i.setAttribute('required', 'true'));
+                        }
+                    });
+                }
+            </script>
 
             <h3 class="section-title" style="margin-top: 2rem;">
                 <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">

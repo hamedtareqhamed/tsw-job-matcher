@@ -13,7 +13,7 @@
                     <div>
                         <h3 style="font-size: 1.25rem; font-weight: 700; color: var(--text-primary);">{{ cand.profile.name }}</h3>
                         <p style="font-size: 0.85rem; color: var(--text-secondary);">
-                            {{ cand.profile.degreeName }} ({{ cand.profile.institution }}) — <strong>Level: {{ cand.profile.degreeLevel }}</strong>
+                            {{ cand.profile.degreeName }} in <strong>{{ cand.profile.fieldOfStudy }}</strong> ({{ cand.profile.institution }}) — <strong>Level: {{ cand.profile.degreeLevel }}</strong>
                         </p>
                         {% if cand.profile.experience %}
                             <div style="margin-top: 0.35rem; font-size: 0.8rem; color: var(--text-primary); display: flex; align-items: center; gap: 0.4rem; flex-wrap: wrap;">
@@ -52,7 +52,11 @@
                                 {{ cand.best_match.job.title }}
                             </h4>
                             <p style="font-size: 0.85rem; color: var(--text-secondary);">
-                                {{ cand.best_match.job.company }} ({{ cand.best_match.job.location }}) — <strong>Required Education: {{ cand.best_match.job.reqEdu }}</strong>
+                                {{ cand.best_match.job.company }} ({{ cand.best_match.job.location }})
+                                {% if cand.best_match.job.industry %}
+                                    — <span style="color: var(--primary-color); font-weight: 500;">{{ cand.best_match.job.industry }}</span>
+                                {% endif %}
+                                — <strong>Required Education: {{ cand.best_match.job.reqEdu }}</strong>
                             </p>
                             
                             <!-- Skill overlaps in recommendation -->

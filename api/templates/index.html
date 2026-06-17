@@ -22,10 +22,14 @@
         </div>
 
         <div class="profile-card">
-            <div class="profile-grid">
+            <div class="profile-grid" style="grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));">
                 <div>
                     <div class="profile-label">Degree Name</div>
                     <div class="profile-val">{{ user_profile.degreeName }}</div>
+                </div>
+                <div>
+                    <div class="profile-label">Field of Study</div>
+                    <div class="profile-val">{{ user_profile.fieldOfStudy }}</div>
                 </div>
                 <div>
                     <div class="profile-label">Degree Level</div>
@@ -109,6 +113,10 @@
                         <div class="match-title">{{ match.job.title }}</div>
                         <div class="match-meta">
                             <span>{{ match.job.company }} ({{ match.job.location }})</span>
+                            {% if match.job.industry %}
+                                <span>•</span>
+                                <span style="color: var(--primary-color); font-weight: 500;">{{ match.job.industry }}</span>
+                            {% endif %}
                             <span>•</span>
                             <span style="font-weight: 500;">Level: {{ match.job.level }}</span>
                         </div>
