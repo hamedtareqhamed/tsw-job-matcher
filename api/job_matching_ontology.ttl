@@ -1,0 +1,565 @@
+@prefix ex:   <http://example.org/jobmatch#> .
+@prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl:  <http://www.w3.org/2002/07/owl#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+# =============================================================
+#  ONTOLOGY DECLARATION
+# =============================================================
+ex:JobMatchingOntology rdf:type owl:Ontology ;
+    rdfs:label "Smart Job Matching Ontology for IT Graduates" ;
+    rdfs:comment "An OWL ontology that models IT job positions, applicant profiles, skills, education, and experience to enable semantic job matching for IT students and fresh graduates." .
+
+# =============================================================
+#  CLASSES
+# =============================================================
+ex:Applicant rdf:type owl:Class ;
+    rdfs:label "Applicant" ;
+    rdfs:comment "A person seeking employment — either an IT student or a fresh graduate." .
+
+ex:Job rdf:type owl:Class ;
+    rdfs:label "Job" ;
+    rdfs:comment "An IT job position offered by a company." .
+
+ex:Skill rdf:type owl:Class ;
+    rdfs:label "Skill" ;
+    rdfs:comment "A technical competency relevant to IT positions." .
+
+ex:Company rdf:type owl:Class ;
+    rdfs:label "Company" ;
+    rdfs:comment "An organisation that offers job positions." .
+
+ex:Education rdf:type owl:Class ;
+    rdfs:label "Education" ;
+    rdfs:comment "An educational qualification held by an applicant." .
+
+ex:Experience rdf:type owl:Class ;
+    rdfs:label "Experience" ;
+    rdfs:comment "A work or internship experience record held by an applicant." .
+
+# ---------- Skill Sub-categories (RDFS subClassOf) ----------
+ex:ProgrammingLanguage rdf:type owl:Class ;
+    rdfs:subClassOf ex:Skill ;
+    rdfs:label "Programming Language" ;
+    rdfs:comment "A programming, scripting, or markup language." .
+
+ex:AIDataSkill rdf:type owl:Class ;
+    rdfs:subClassOf ex:Skill ;
+    rdfs:label "AI and Data Science Skill" ;
+    rdfs:comment "A skill related to artificial intelligence, machine learning, or data science." .
+
+ex:WebCloudSkill rdf:type owl:Class ;
+    rdfs:subClassOf ex:Skill ;
+    rdfs:label "Web and Cloud Technology Skill" ;
+    rdfs:comment "A skill related to web development frameworks or cloud platforms." .
+
+ex:SecuritySkill rdf:type owl:Class ;
+    rdfs:subClassOf ex:Skill ;
+    rdfs:label "Cybersecurity Skill" ;
+    rdfs:comment "A skill related to information security and penetration testing." .
+
+ex:DevToolSkill rdf:type owl:Class ;
+    rdfs:subClassOf ex:Skill ;
+    rdfs:label "Development Tool Skill" ;
+    rdfs:comment "A skill related to version control, CI/CD, or DevOps tooling." .
+
+# ---------- OWL Disjoint-Class Axioms ----------
+ex:Applicant owl:disjointWith ex:Job .
+ex:Applicant owl:disjointWith ex:Company .
+ex:Applicant owl:disjointWith ex:Skill .
+ex:Job       owl:disjointWith ex:Company .
+ex:Job       owl:disjointWith ex:Skill .
+ex:Company   owl:disjointWith ex:Skill .
+
+# =============================================================
+#  OBJECT PROPERTIES
+# =============================================================
+ex:hasSkill rdf:type owl:ObjectProperty ;
+    rdfs:domain ex:Applicant ;
+    rdfs:range  ex:Skill ;
+    rdfs:label  "has skill" ;
+    rdfs:comment "Links an applicant to a skill they possess." .
+
+ex:requiresSkill rdf:type owl:ObjectProperty ;
+    rdfs:domain ex:Job ;
+    rdfs:range  ex:Skill ;
+    rdfs:label  "requires skill" ;
+    rdfs:comment "Links a job to a skill it requires from candidates." .
+
+ex:hasEducation rdf:type owl:ObjectProperty ;
+    rdfs:domain ex:Applicant ;
+    rdfs:range  ex:Education ;
+    rdfs:label  "has education" ;
+    rdfs:comment "Links an applicant to their educational qualification." .
+
+ex:hasExperience rdf:type owl:ObjectProperty ;
+    rdfs:domain ex:Applicant ;
+    rdfs:range  ex:Experience ;
+    rdfs:label  "has experience" ;
+    rdfs:comment "Links an applicant to a work or internship experience." .
+
+ex:offeredBy rdf:type owl:ObjectProperty ;
+    rdfs:domain ex:Job ;
+    rdfs:range  ex:Company ;
+    rdfs:label  "offered by" ;
+    rdfs:comment "Associates a job position with the company that offers it." .
+
+ex:offersJob rdf:type owl:ObjectProperty ;
+    owl:inverseOf ex:offeredBy ;
+    rdfs:domain ex:Company ;
+    rdfs:range  ex:Job ;
+    rdfs:label  "offers job" ;
+    rdfs:comment "Associates a company with a job position it offers (inverse of offeredBy)." .
+
+# ---------- Functional-Property Axiom ----------
+# Each job is offered by exactly one company.
+ex:offeredBy rdf:type owl:FunctionalProperty .
+
+# =============================================================
+#  DATATYPE PROPERTIES
+# =============================================================
+ex:hasName rdf:type owl:DatatypeProperty ;
+    rdfs:domain ex:Applicant ;
+    rdfs:range  xsd:string ;
+    rdfs:label  "has name" ;
+    rdfs:comment "The full name of the applicant." .
+
+ex:hasApplicantType rdf:type owl:DatatypeProperty ;
+    rdfs:domain ex:Applicant ;
+    rdfs:range  xsd:string ;
+    rdfs:label  "has applicant type" ;
+    rdfs:comment "The category of the applicant, e.g. 'Fresh Graduate' or 'IT Student'." .
+
+ex:hasDegreeName rdf:type owl:DatatypeProperty ;
+    rdfs:domain ex:Education ;
+    rdfs:range  xsd:string ;
+    rdfs:label  "has degree name" ;
+    rdfs:comment "The name or title of the degree, e.g. 'BSc Computer Science'." .
+
+ex:hasDegreeLevel rdf:type owl:DatatypeProperty ;
+    rdfs:domain ex:Education ;
+    rdfs:range  xsd:string ;
+    rdfs:label  "has degree level" ;
+    rdfs:comment "The level of the degree: Bachelor, Diploma, etc." .
+
+ex:hasFieldOfStudy rdf:type owl:DatatypeProperty ;
+    rdfs:domain ex:Education ;
+    rdfs:range  xsd:string ;
+    rdfs:label  "has field of study" ;
+    rdfs:comment "The specialisation or field of the degree." .
+
+ex:hasInstitution rdf:type owl:DatatypeProperty ;
+    rdfs:domain ex:Education ;
+    rdfs:range  xsd:string ;
+    rdfs:label  "has institution" ;
+    rdfs:comment "The university or institution that awarded the qualification." .
+
+ex:hasGraduationYear rdf:type owl:DatatypeProperty ;
+    rdfs:domain ex:Education ;
+    rdfs:range  xsd:integer ;
+    rdfs:label  "has graduation year" ;
+    rdfs:comment "The year the applicant graduated or expects to graduate." .
+
+ex:hasRole rdf:type owl:DatatypeProperty ;
+    rdfs:domain ex:Experience ;
+    rdfs:range  xsd:string ;
+    rdfs:label  "has role" ;
+    rdfs:comment "The job title or role held during the experience." .
+
+ex:hasOrganisation rdf:type owl:DatatypeProperty ;
+    rdfs:domain ex:Experience ;
+    rdfs:range  xsd:string ;
+    rdfs:label  "has organisation" ;
+    rdfs:comment "The organisation where the experience took place." .
+
+ex:hasDurationMonths rdf:type owl:DatatypeProperty ;
+    rdfs:domain ex:Experience ;
+    rdfs:range  xsd:integer ;
+    rdfs:label  "has duration (months)" ;
+    rdfs:comment "Duration of the experience in months." .
+
+ex:hasExperienceType rdf:type owl:DatatypeProperty ;
+    rdfs:domain ex:Experience ;
+    rdfs:range  xsd:string ;
+    rdfs:label  "has experience type" ;
+    rdfs:comment "The type of experience, e.g. 'Internship', 'Part-time', 'Freelance'." .
+
+ex:hasJobLevel rdf:type owl:DatatypeProperty ;
+    rdfs:domain ex:Job ;
+    rdfs:range  xsd:string ;
+    rdfs:label  "has job level" ;
+    rdfs:comment "Seniority level of the position, e.g. 'Entry-Level', 'Junior'." .
+
+ex:hasRequiredDegreeLevel rdf:type owl:DatatypeProperty ;
+    rdfs:domain ex:Job ;
+    rdfs:range  xsd:string ;
+    rdfs:label  "has required degree level" ;
+    rdfs:comment "The minimum education level required by this job." .
+
+ex:hasLocation rdf:type owl:DatatypeProperty ;
+    rdfs:domain ex:Company ;
+    rdfs:range  xsd:string ;
+    rdfs:label  "has location" ;
+    rdfs:comment "The headquarters or office location of the company." .
+
+ex:hasIndustry rdf:type owl:DatatypeProperty ;
+    rdfs:domain ex:Company ;
+    rdfs:range  xsd:string ;
+    rdfs:label  "has industry" ;
+    rdfs:comment "The industry sector of the company." .
+
+# =============================================================
+#  INSTANCES — SKILLS  (22 skills)
+# =============================================================
+
+# ---- Programming Languages (7) ----
+ex:Python rdf:type ex:ProgrammingLanguage ;
+    rdfs:label "Python" .
+
+ex:Java rdf:type ex:ProgrammingLanguage ;
+    rdfs:label "Java" .
+
+ex:JavaScript rdf:type ex:ProgrammingLanguage ;
+    rdfs:label "JavaScript" .
+
+ex:HTML rdf:type ex:ProgrammingLanguage ;
+    rdfs:label "HTML" .
+
+ex:CSS rdf:type ex:ProgrammingLanguage ;
+    rdfs:label "CSS" .
+
+ex:SQL rdf:type ex:ProgrammingLanguage ;
+    rdfs:label "SQL" .
+
+ex:NoSQL rdf:type ex:ProgrammingLanguage ;
+    rdfs:label "NoSQL" .
+
+# ---- AI / Data Science (5) ----
+ex:MachineLearning rdf:type ex:AIDataSkill ;
+    rdfs:label "Machine Learning" .
+
+ex:DeepLearning rdf:type ex:AIDataSkill ;
+    rdfs:label "Deep Learning" .
+
+ex:HuggingFace rdf:type ex:AIDataSkill ;
+    rdfs:label "Hugging Face" .
+
+ex:NLP rdf:type ex:AIDataSkill ;
+    rdfs:label "Natural Language Processing" .
+
+ex:DataAnalysis rdf:type ex:AIDataSkill ;
+    rdfs:label "Data Analysis" .
+
+# ---- Web / Cloud (5) ----
+ex:React rdf:type ex:WebCloudSkill ;
+    rdfs:label "React" .
+
+ex:NodeJS rdf:type ex:WebCloudSkill ;
+    rdfs:label "Node.js" .
+
+ex:CloudComputingAWS rdf:type ex:WebCloudSkill ;
+    rdfs:label "Cloud Computing (AWS)" .
+
+ex:Docker rdf:type ex:WebCloudSkill ;
+    rdfs:label "Docker" .
+
+ex:Kubernetes rdf:type ex:WebCloudSkill ;
+    rdfs:label "Kubernetes" .
+
+# ---- Security (2) ----
+ex:Cybersecurity rdf:type ex:SecuritySkill ;
+    rdfs:label "Cybersecurity" .
+
+ex:PenetrationTesting rdf:type ex:SecuritySkill ;
+    rdfs:label "Penetration Testing" .
+
+# ---- Dev Tools (3) ----
+ex:APIIntegration rdf:type ex:DevToolSkill ;
+    rdfs:label "API Integration" .
+
+ex:Git rdf:type ex:DevToolSkill ;
+    rdfs:label "Git" .
+
+ex:GitHub rdf:type ex:DevToolSkill ;
+    rdfs:label "GitHub" .
+
+# =============================================================
+#  INSTANCES — COMPANIES  (4 companies)
+# =============================================================
+ex:TechNova rdf:type ex:Company ;
+    rdfs:label "TechNova Solutions" ;
+    ex:hasLocation "Kuala Lumpur, Malaysia" ;
+    ex:hasIndustry "Artificial Intelligence & Cloud Computing" .
+
+ex:CyberSecure rdf:type ex:Company ;
+    rdfs:label "CyberSecure Ltd" ;
+    ex:hasLocation "Cyberjaya, Malaysia" ;
+    ex:hasIndustry "Cybersecurity Services" .
+
+ex:DataDriven rdf:type ex:Company ;
+    rdfs:label "DataDriven Inc" ;
+    ex:hasLocation "Penang, Malaysia" ;
+    ex:hasIndustry "Data Science & Analytics" .
+
+ex:WebWorks rdf:type ex:Company ;
+    rdfs:label "WebWorks Agency" ;
+    ex:hasLocation "Petaling Jaya, Malaysia" ;
+    ex:hasIndustry "Web Development & Digital Design" .
+
+# =============================================================
+#  INSTANCES — JOBS  (9 jobs, each with 4–6 required skills)
+# =============================================================
+ex:AIEngineer rdf:type ex:Job ;
+    rdfs:label "AI Engineer" ;
+    ex:offeredBy ex:TechNova ;
+    ex:hasJobLevel "Entry-Level" ;
+    ex:hasRequiredDegreeLevel "Bachelor" ;
+    ex:requiresSkill ex:Python ,
+                     ex:MachineLearning ,
+                     ex:DeepLearning ,
+                     ex:NLP ,
+                     ex:Git .
+
+ex:DataScientist rdf:type ex:Job ;
+    rdfs:label "Data Scientist" ;
+    ex:offeredBy ex:DataDriven ;
+    ex:hasJobLevel "Junior" ;
+    ex:hasRequiredDegreeLevel "Bachelor" ;
+    ex:requiresSkill ex:Python ,
+                     ex:MachineLearning ,
+                     ex:DataAnalysis ,
+                     ex:SQL ,
+                     ex:NLP .
+
+ex:FrontendDeveloper rdf:type ex:Job ;
+    rdfs:label "Frontend Developer" ;
+    ex:offeredBy ex:WebWorks ;
+    ex:hasJobLevel "Entry-Level" ;
+    ex:hasRequiredDegreeLevel "Diploma" ;
+    ex:requiresSkill ex:JavaScript ,
+                     ex:HTML ,
+                     ex:CSS ,
+                     ex:React ,
+                     ex:Git .
+
+ex:BackendDeveloper rdf:type ex:Job ;
+    rdfs:label "Backend Developer" ;
+    ex:offeredBy ex:WebWorks ;
+    ex:hasJobLevel "Entry-Level" ;
+    ex:hasRequiredDegreeLevel "Bachelor" ;
+    ex:requiresSkill ex:Java ,
+                     ex:Python ,
+                     ex:NodeJS ,
+                     ex:SQL ,
+                     ex:APIIntegration ,
+                     ex:Git .
+
+ex:FullStackDeveloper rdf:type ex:Job ;
+    rdfs:label "Full Stack Developer" ;
+    ex:offeredBy ex:TechNova ;
+    ex:hasJobLevel "Junior" ;
+    ex:hasRequiredDegreeLevel "Bachelor" ;
+    ex:requiresSkill ex:JavaScript ,
+                     ex:Python ,
+                     ex:React ,
+                     ex:NodeJS ,
+                     ex:SQL ,
+                     ex:Git .
+
+ex:CybersecurityAnalyst rdf:type ex:Job ;
+    rdfs:label "Cybersecurity Analyst" ;
+    ex:offeredBy ex:CyberSecure ;
+    ex:hasJobLevel "Entry-Level" ;
+    ex:hasRequiredDegreeLevel "Bachelor" ;
+    ex:requiresSkill ex:Python ,
+                     ex:Cybersecurity ,
+                     ex:PenetrationTesting ,
+                     ex:CloudComputingAWS ,
+                     ex:Git .
+
+ex:CloudArchitect rdf:type ex:Job ;
+    rdfs:label "Cloud Architect" ;
+    ex:offeredBy ex:TechNova ;
+    ex:hasJobLevel "Junior" ;
+    ex:hasRequiredDegreeLevel "Bachelor" ;
+    ex:requiresSkill ex:CloudComputingAWS ,
+                     ex:Docker ,
+                     ex:Kubernetes ,
+                     ex:Python ,
+                     ex:Git .
+
+ex:DevOpsEngineer rdf:type ex:Job ;
+    rdfs:label "DevOps Engineer" ;
+    ex:offeredBy ex:CyberSecure ;
+    ex:hasJobLevel "Entry-Level" ;
+    ex:hasRequiredDegreeLevel "Bachelor" ;
+    ex:requiresSkill ex:Docker ,
+                     ex:Kubernetes ,
+                     ex:CloudComputingAWS ,
+                     ex:Python ,
+                     ex:Git ,
+                     ex:GitHub .
+
+ex:UXUIDesigner rdf:type ex:Job ;
+    rdfs:label "UX/UI Designer" ;
+    ex:offeredBy ex:WebWorks ;
+    ex:hasJobLevel "Entry-Level" ;
+    ex:hasRequiredDegreeLevel "Diploma" ;
+    ex:requiresSkill ex:HTML ,
+                     ex:CSS ,
+                     ex:JavaScript ,
+                     ex:React .
+
+# =============================================================
+#  INSTANCES — EDUCATION  (6 education records)
+# =============================================================
+ex:Edu_Sara rdf:type ex:Education ;
+    rdfs:label "BSc Computer Science (Artificial Intelligence)" ;
+    ex:hasDegreeName "BSc Computer Science (Artificial Intelligence)" ;
+    ex:hasDegreeLevel "Bachelor" ;
+    ex:hasFieldOfStudy "Artificial Intelligence" ;
+    ex:hasInstitution "Multimedia University" ;
+    ex:hasGraduationYear 2025 .
+
+ex:Edu_Ahmad rdf:type ex:Education ;
+    rdfs:label "Diploma in Information Technology" ;
+    ex:hasDegreeName "Diploma in Information Technology" ;
+    ex:hasDegreeLevel "Diploma" ;
+    ex:hasFieldOfStudy "Information Technology" ;
+    ex:hasInstitution "Politeknik Sultan Salahuddin Abdul Aziz Shah" ;
+    ex:hasGraduationYear 2026 .
+
+ex:Edu_Lina rdf:type ex:Education ;
+    rdfs:label "BSc Software Engineering" ;
+    ex:hasDegreeName "BSc Software Engineering" ;
+    ex:hasDegreeLevel "Bachelor" ;
+    ex:hasFieldOfStudy "Software Engineering" ;
+    ex:hasInstitution "Universiti Teknologi Malaysia" ;
+    ex:hasGraduationYear 2025 .
+
+ex:Edu_Omar rdf:type ex:Education ;
+    rdfs:label "BSc Cybersecurity" ;
+    ex:hasDegreeName "BSc Cybersecurity" ;
+    ex:hasDegreeLevel "Bachelor" ;
+    ex:hasFieldOfStudy "Cybersecurity" ;
+    ex:hasInstitution "Asia Pacific University" ;
+    ex:hasGraduationYear 2025 .
+
+ex:Edu_Mei rdf:type ex:Education ;
+    rdfs:label "BSc Computer Science" ;
+    ex:hasDegreeName "BSc Computer Science" ;
+    ex:hasDegreeLevel "Bachelor" ;
+    ex:hasFieldOfStudy "Computer Science" ;
+    ex:hasInstitution "Universiti Malaya" ;
+    ex:hasGraduationYear 2026 .
+
+ex:Edu_Tariq rdf:type ex:Education ;
+    rdfs:label "BSc Information Technology" ;
+    ex:hasDegreeName "BSc Information Technology" ;
+    ex:hasDegreeLevel "Bachelor" ;
+    ex:hasFieldOfStudy "Information Technology" ;
+    ex:hasInstitution "HELP University" ;
+    ex:hasGraduationYear 2025 .
+
+# =============================================================
+#  INSTANCES — EXPERIENCE  (4 experience records)
+# =============================================================
+ex:Exp_Sara rdf:type ex:Experience ;
+    rdfs:label "AI Research Intern at TechNova Solutions" ;
+    ex:hasRole "AI Research Intern" ;
+    ex:hasOrganisation "TechNova Solutions" ;
+    ex:hasDurationMonths 3 ;
+    ex:hasExperienceType "Internship" .
+
+ex:Exp_Lina rdf:type ex:Experience ;
+    rdfs:label "Software Developer Intern at Petronas Digital" ;
+    ex:hasRole "Software Developer Intern" ;
+    ex:hasOrganisation "Petronas Digital" ;
+    ex:hasDurationMonths 6 ;
+    ex:hasExperienceType "Internship" .
+
+ex:Exp_Omar rdf:type ex:Experience ;
+    rdfs:label "SOC Analyst Intern at CyberSecure Ltd" ;
+    ex:hasRole "SOC Analyst Intern" ;
+    ex:hasOrganisation "CyberSecure Ltd" ;
+    ex:hasDurationMonths 3 ;
+    ex:hasExperienceType "Internship" .
+
+ex:Exp_Tariq rdf:type ex:Experience ;
+    rdfs:label "Freelance Web Developer" ;
+    ex:hasRole "Freelance Web Developer" ;
+    ex:hasOrganisation "Self-employed" ;
+    ex:hasDurationMonths 8 ;
+    ex:hasExperienceType "Freelance" .
+
+# =============================================================
+#  INSTANCES — APPLICANTS  (6 applicants)
+# =============================================================
+ex:App_Sara rdf:type ex:Applicant ;
+    rdfs:label "Sara binti Mohd Razif" ;
+    ex:hasName "Sara binti Mohd Razif" ;
+    ex:hasApplicantType "Fresh Graduate" ;
+    ex:hasEducation ex:Edu_Sara ;
+    ex:hasExperience ex:Exp_Sara ;
+    ex:hasSkill ex:Python ,
+               ex:MachineLearning ,
+               ex:DeepLearning ,
+               ex:HuggingFace ,
+               ex:GitHub .
+
+ex:App_Ahmad rdf:type ex:Applicant ;
+    rdfs:label "Ahmad Danial bin Yusof" ;
+    ex:hasName "Ahmad Danial bin Yusof" ;
+    ex:hasApplicantType "IT Student" ;
+    ex:hasEducation ex:Edu_Ahmad ;
+    ex:hasSkill ex:HTML ,
+               ex:CSS ,
+               ex:JavaScript ,
+               ex:React .
+
+ex:App_Lina rdf:type ex:Applicant ;
+    rdfs:label "Lina Tan Wei Ling" ;
+    ex:hasName "Lina Tan Wei Ling" ;
+    ex:hasApplicantType "Fresh Graduate" ;
+    ex:hasEducation ex:Edu_Lina ;
+    ex:hasExperience ex:Exp_Lina ;
+    ex:hasSkill ex:Java ,
+               ex:Python ,
+               ex:NodeJS ,
+               ex:APIIntegration ,
+               ex:SQL .
+
+ex:App_Omar rdf:type ex:Applicant ;
+    rdfs:label "Omar Farhan bin Ali" ;
+    ex:hasName "Omar Farhan bin Ali" ;
+    ex:hasApplicantType "Fresh Graduate" ;
+    ex:hasEducation ex:Edu_Omar ;
+    ex:hasExperience ex:Exp_Omar ;
+    ex:hasSkill ex:Python ,
+               ex:Cybersecurity ,
+               ex:PenetrationTesting ,
+               ex:CloudComputingAWS .
+
+ex:App_Mei rdf:type ex:Applicant ;
+    rdfs:label "Mei Ling Chong" ;
+    ex:hasName "Mei Ling Chong" ;
+    ex:hasApplicantType "IT Student" ;
+    ex:hasEducation ex:Edu_Mei ;
+    ex:hasSkill ex:Python ,
+               ex:DataAnalysis ,
+               ex:SQL ,
+               ex:NoSQL .
+
+ex:App_Tariq rdf:type ex:Applicant ;
+    rdfs:label "Tariq Hakim bin Ibrahim" ;
+    ex:hasName "Tariq Hakim bin Ibrahim" ;
+    ex:hasApplicantType "Fresh Graduate" ;
+    ex:hasEducation ex:Edu_Tariq ;
+    ex:hasExperience ex:Exp_Tariq ;
+    ex:hasSkill ex:JavaScript ,
+               ex:HTML ,
+               ex:CSS ,
+               ex:NodeJS ,
+               ex:React ,
+               ex:Git .

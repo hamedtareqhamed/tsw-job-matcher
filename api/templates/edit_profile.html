@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>Edit Profile & Skills</h1>
+    <p class="subtitle">Update your profile parameters or check competencies to see how it affects your job placement scores.</p>
+
+    <div class="glass-panel" style="max-width: 900px;">
+        <form action="{{ url_for('edit_profile') }}" method="POST">
+            <h3 class="section-title">
+                <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                </svg>
+                Personal & Academic Information
+            </h3>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">Full Name</label>
+                    <input type="text" name="name" class="form-input" value="{{ user_profile.name }}" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Applicant Type</label>
+                    <select name="type" class="form-input" style="cursor: pointer;">
+                        <option value="Fresh Graduate" {% if user_profile.type == 'Fresh Graduate' %}selected{% endif %}>Fresh Graduate</option>
+                        <option value="IT Student" {% if user_profile.type == 'IT Student' %}selected{% endif %}>IT Student</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">Degree Name</label>
+                    <input type="text" name="degreeName" class="form-input" value="{{ user_profile.degreeName }}" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Institution</label>
+                    <input type="text" name="institution" class="form-input" value="{{ user_profile.institution }}" required>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">Degree level</label>
+                    <select name="degreeLevel" class="form-input" style="cursor: pointer;">
+                        <option value="Bachelor" {% if user_profile.degreeLevel == 'Bachelor' %}selected{% endif %}>Bachelor Degree</option>
+                        <option value="Diploma" {% if user_profile.degreeLevel == 'Diploma' %}selected{% endif %}>Diploma</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Graduation Year</label>
+                    <input type="number" name="gradYear" class="form-input" value="{{ user_profile.gradYear }}" required>
+                </div>
+            </div>
+
+            <h3 class="section-title" style="margin-top: 2rem;">
+                <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                </svg>
+                Select Skills & Competencies
+            </h3>
+            <p style="color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 1rem;">
+                Select from the skills defined in the ontology to match yourself against job descriptions:
+            </p>
+
+            <div class="skills-grid">
+                {% for category, cat_skills in grouped_skills.items() %}
+                    <div class="skill-category-card">
+                        <div class="skill-category-title">{{ category }}</div>
+                        <div class="checkbox-list">
+                            {% for skill in cat_skills %}
+                                <label class="checkbox-label">
+                                    <input type="checkbox" name="skills" value="{{ skill.id }}" 
+                                           {% if skill.id in user_profile.skills %}checked{% endif %}>
+                                    <span>{{ skill.label }}</span>
+                                </label>
+                            {% endfor %}
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+
+            <div style="border-top: 1px solid var(--border-color); padding-top: 1.25rem; display: flex; gap: 1rem;">
+                <button type="submit" class="btn-primary">
+                    Save Profile & Run Matcher
+                </button>
+                <a href="{{ url_for('home') }}" class="btn-primary" style="background-color: #f1f5f9; color: var(--text-primary); border: 1px solid var(--border-color); text-decoration: none;">
+                    Cancel
+                </a>
+            </div>
+
+        </form>
+    </div>
+{% endblock %}

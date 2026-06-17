@@ -1,0 +1,12 @@
+__pycache__/
+*.pyc
+.gemini/
+.env
+instance/
+*.db
+*.sqlite
+.DS_Store
+*.docx
+TSW Member 2 Report Section 1.txt
+*.pdf
+.~lock*
