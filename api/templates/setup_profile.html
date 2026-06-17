@@ -127,22 +127,24 @@
                     </svg>
                     Skills & Competencies
                 </h3>
-                <p style="color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 1.5rem;">
-                    Select the key technical and professional skills that match your experience:
+                <p style="color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 1rem;">
+                    Select the key technical and professional skills that match your experience. Related skills will automatically float to the top as you select them:
                 </p>
-                <div class="skills-grid" style="display: grid; grid-template-columns: 1fr; gap: 1rem; max-height: 350px; overflow-y: auto; padding-right: 0.5rem;">
-                    {% for category, cat_skills in grouped_skills.items() %}
-                        <div class="skill-category-card" style="padding: 1rem; border-radius: 8px; border: 1px solid var(--border-color); background-color: rgba(255, 255, 255, 0.3);">
-                            <div class="skill-category-title" style="font-weight: 700; font-size: 0.9rem; color: var(--primary-color); margin-bottom: 0.75rem;">{{ category }}</div>
-                            <div class="checkbox-list" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 0.5rem;">
-                                {% for skill in cat_skills %}
-                                    <label class="checkbox-label" style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.85rem; cursor: pointer;">
-                                        <input type="checkbox" name="skills" value="{{ skill.id }}">
-                                        <span>{{ skill.label }}</span>
-                                    </label>
-                                {% endfor %}
-                            </div>
-                        </div>
+                
+                <!-- Smart Search Bar -->
+                <div style="margin-bottom: 1rem;">
+                    <input type="text" id="search-skills" onkeyup="renderSkillsGrid()" placeholder="🔎 Search skills by name or category..." style="width: 100%; padding: 0.75rem; border: 1px solid var(--border-color); border-radius: 8px; font-size: 0.9rem; outline: none; transition: border-color 0.2s; box-sizing: border-box;" onfocus="this.style.borderColor='var(--primary-color)'" onblur="this.style.borderColor='var(--border-color)'">
+                </div>
+
+                <!-- Interactive Grid Container -->
+                <div id="skills-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 0.75rem; max-height: 280px; overflow-y: auto; padding-right: 0.5rem; padding-bottom: 0.5rem;">
+                    <!-- JS populated -->
+                </div>
+
+                <!-- Hidden checkboxes for form submission -->
+                <div id="hidden-checkboxes" style="display: none;">
+                    {% for skill in skills_with_tags %}
+                        <input type="checkbox" name="skills" id="chk-{{ skill.id }}" value="{{ skill.id }}">
                     {% endfor %}
                 </div>
             </div>
@@ -263,6 +265,139 @@
                 dur.setAttribute('required', 'true');
             }
         }
+
+        // Smart Skills Grid with Tag Affinity and Search ranking
+        const ALL_SKILLS = {{ skills_with_tags | tojson }};
+        let selectedSkillIds = new Set();
+
+        function renderSkillsGrid() {
+            const query = document.getElementById('search-skills').value.trim().toLowerCase();
+            const grid = document.getElementById('skills-grid');
+            grid.innerHTML = '';
+            
+            // 1. Calculate active tag/category frequencies
+            const activeCategoryFreqs = {};
+            selectedSkillIds.forEach(id => {
+                const s = ALL_SKILLS.find(x => x.id === id);
+                if (s && s.categories) {
+                    s.categories.forEach(cat => {
+                        activeCategoryFreqs[cat] = (activeCategoryFreqs[cat] || 0) + 1;
+                    });
+                }
+            });
+            
+            // 2. Score each skill
+            const scoredSkills = ALL_SKILLS.map(skill => {
+                let scoreMatch = 0;
+                const labelLower = skill.label.toLowerCase();
+                
+                if (query === '') {
+                    scoreMatch = 1;
+                } else if (labelLower.startsWith(query)) {
+                    scoreMatch = 1000;
+                } else if (labelLower.includes(query)) {
+                    scoreMatch = 500;
+                } else {
+                    // Check if query matches any category
+                    const matchesCat = skill.categories.some(cat => cat.toLowerCase().includes(query));
+                    if (matchesCat) {
+                        scoreMatch = 200;
+                    } else {
+                        scoreMatch = 0; // hide
+                    }
+                }
+                
+                // Tag affinity scoring
+                let d = 0; // Number of distinct matching categories
+                let fSum = 0; // Sum of frequencies
+                if (skill.categories) {
+                    skill.categories.forEach(cat => {
+                        if (activeCategoryFreqs[cat] > 0) {
+                            d++;
+                            fSum += activeCategoryFreqs[cat];
+                        }
+                    });
+                }
+                const scoreTag = (d * 10) + fSum;
+                
+                return {
+                    skill,
+                    totalScore: scoreMatch + scoreTag,
+                    scoreMatch
+                };
+            });
+            
+            // 3. Filter out non-matching skills
+            const filteredSkills = scoredSkills.filter(x => x.scoreMatch > 0);
+            
+            // 4. Sort: TotalScore descending, then alphabetically
+            filteredSkills.sort((a, b) => {
+                if (b.totalScore !== a.totalScore) {
+                    return b.totalScore - a.totalScore;
+                }
+                return a.skill.label.localeCompare(b.skill.label);
+            });
+            
+            // 5. Render
+            filteredSkills.forEach(({ skill }) => {
+                const isSelected = selectedSkillIds.has(skill.id);
+                const card = document.createElement('div');
+                card.className = `skill-card ${isSelected ? 'selected' : ''}`;
+                card.setAttribute('onclick', `toggleSkill('${skill.id}')`);
+                card.style.cssText = `
+                    border: 1px solid ${isSelected ? 'var(--primary-color)' : 'var(--border-color)'};
+                    background-color: ${isSelected ? 'rgba(59, 130, 246, 0.08)' : 'rgba(255, 255, 255, 0.4)'};
+                    color: ${isSelected ? 'var(--primary-color)' : 'var(--text-primary)'};
+                    border-radius: 8px;
+                    padding: 0.6rem;
+                    cursor: pointer;
+                    transition: all 0.2s;
+                    display: flex;
+                    flex-direction: column;
+                    gap: 0.35rem;
+                `;
+                
+                const labelDiv = document.createElement('div');
+                labelDiv.innerText = skill.label;
+                labelDiv.style.cssText = `font-weight: 600; font-size: 0.85rem;`;
+                card.appendChild(labelDiv);
+                
+                const tagsContainer = document.createElement('div');
+                tagsContainer.style.cssText = `display: flex; flex-wrap: wrap; gap: 0.25rem;`;
+                skill.categories.forEach(cat => {
+                    const badge = document.createElement('span');
+                    badge.innerText = cat.replace(" Skill", "").replace(" Technology", "");
+                    badge.style.cssText = `
+                        font-size: 0.65rem;
+                        background-color: ${isSelected ? 'rgba(59, 130, 246, 0.15)' : 'var(--border-color)'};
+                        color: ${isSelected ? 'var(--primary-color)' : 'var(--text-secondary)'};
+                        padding: 0.1rem 0.35rem;
+                        border-radius: 4px;
+                    `;
+                    tagsContainer.appendChild(badge);
+                });
+                card.appendChild(tagsContainer);
+                grid.appendChild(card);
+            });
+        }
+
+        function toggleSkill(id) {
+            const chk = document.getElementById(`chk-${id}`);
+            if (!chk) return;
+            
+            if (selectedSkillIds.has(id)) {
+                selectedSkillIds.delete(id);
+                chk.checked = false;
+            } else {
+                selectedSkillIds.add(id);
+                chk.checked = true;
+            }
+            
+            renderSkillsGrid();
+        }
+
+        // Initialize grid on load
+        renderSkillsGrid();
 
         // Initialize first step
         showStep(currentStep);

@@ -98,6 +98,22 @@ def get_skills():
         })
     return skills
 
+def get_skills_with_tags():
+    flat_skills = get_skills()
+    skills_dict = {}
+    for s in flat_skills:
+        sid = s["id"]
+        if sid not in skills_dict:
+            skills_dict[sid] = {
+                "id": sid,
+                "label": s["label"],
+                "categories": []
+            }
+        if s["category"] not in skills_dict[sid]["categories"]:
+            skills_dict[sid]["categories"].append(s["category"])
+    return list(skills_dict.values())
+
+
 def get_jobs():
     query = """
     PREFIX ex: <http://example.org/jobmatch#>
@@ -462,13 +478,7 @@ def home():
     
     # Render setup form if profile is empty
     if not user_profile:
-        grouped_skills = {}
-        for s in skills:
-            cat = s["category"]
-            if cat not in grouped_skills:
-                grouped_skills[cat] = []
-            grouped_skills[cat].append(s)
-        return render_template("setup_profile.html", grouped_skills=grouped_skills, active_page="home")
+        return render_template("setup_profile.html", skills_with_tags=get_skills_with_tags(), active_page="home")
         
     # Render matching dashboard
     stats = get_stats()
@@ -527,7 +537,7 @@ def edit_profile():
         session.modified = True
         return redirect(url_for("home"))
         
-    return render_template("edit_profile.html", grouped_skills=grouped_skills, user_profile=user_profile, active_page="edit")
+    return render_template("edit_profile.html", user_profile=user_profile, active_page="edit", skills_with_tags=get_skills_with_tags())
 
 @app.route("/candidates")
 def candidates():
