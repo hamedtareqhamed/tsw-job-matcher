@@ -213,29 +213,56 @@ ex:hasIndustry rdf:type owl:DatatypeProperty ;
 #  INSTANCES — SKILLS  (22 skills)
 # =============================================================
 
-# ---- Programming Languages (7) ----
+# ---- Programming Languages ----
 ex:Python rdf:type ex:ProgrammingLanguage ;
     rdfs:label "Python" .
 
 ex:Java rdf:type ex:ProgrammingLanguage ;
     rdfs:label "Java" .
 
-ex:JavaScript rdf:type ex:ProgrammingLanguage ;
+ex:JavaScript rdf:type ex:ProgrammingLanguage, ex:WebCloudSkill ;
     rdfs:label "JavaScript" .
 
-ex:HTML rdf:type ex:ProgrammingLanguage ;
+ex:TypeScript rdf:type ex:ProgrammingLanguage, ex:WebCloudSkill ;
+    rdfs:label "TypeScript" .
+
+ex:HTML rdf:type ex:ProgrammingLanguage, ex:WebCloudSkill ;
     rdfs:label "HTML" .
 
-ex:CSS rdf:type ex:ProgrammingLanguage ;
+ex:CSS rdf:type ex:ProgrammingLanguage, ex:WebCloudSkill ;
     rdfs:label "CSS" .
 
-ex:SQL rdf:type ex:ProgrammingLanguage ;
+ex:SQL rdf:type ex:ProgrammingLanguage, ex:AIDataSkill ;
     rdfs:label "SQL" .
 
-ex:NoSQL rdf:type ex:ProgrammingLanguage ;
+ex:NoSQL rdf:type ex:ProgrammingLanguage, ex:AIDataSkill ;
     rdfs:label "NoSQL" .
 
-# ---- AI / Data Science (5) ----
+ex:Kotlin rdf:type ex:ProgrammingLanguage, ex:WebCloudSkill ;
+    rdfs:label "Kotlin" .
+
+ex:Swift rdf:type ex:ProgrammingLanguage, ex:WebCloudSkill ;
+    rdfs:label "Swift" .
+
+ex:Go rdf:type ex:ProgrammingLanguage, ex:WebCloudSkill, ex:DevToolSkill ;
+    rdfs:label "Go" .
+
+ex:Rust rdf:type ex:ProgrammingLanguage, ex:SecuritySkill ;
+    rdfs:label "Rust" .
+
+ex:CPlusPlus rdf:type ex:ProgrammingLanguage, ex:AIDataSkill ;
+    rdfs:label "C++" .
+
+ex:CSharp rdf:type ex:ProgrammingLanguage, ex:WebCloudSkill ;
+    rdfs:label "C#" .
+
+ex:PHP rdf:type ex:ProgrammingLanguage, ex:WebCloudSkill ;
+    rdfs:label "PHP" .
+
+ex:Ruby rdf:type ex:ProgrammingLanguage, ex:WebCloudSkill ;
+    rdfs:label "Ruby" .
+
+# ---- AI / Data Science ----
 ex:MachineLearning rdf:type ex:AIDataSkill ;
     rdfs:label "Machine Learning" .
 
@@ -251,7 +278,22 @@ ex:NLP rdf:type ex:AIDataSkill ;
 ex:DataAnalysis rdf:type ex:AIDataSkill ;
     rdfs:label "Data Analysis" .
 
-# ---- Web / Cloud (5) ----
+ex:PyTorch rdf:type ex:AIDataSkill ;
+    rdfs:label "PyTorch" .
+
+ex:TensorFlow rdf:type ex:AIDataSkill ;
+    rdfs:label "TensorFlow" .
+
+ex:Pandas rdf:type ex:AIDataSkill ;
+    rdfs:label "Pandas" .
+
+ex:Tableau rdf:type ex:AIDataSkill ;
+    rdfs:label "Tableau" .
+
+ex:PowerBI rdf:type ex:AIDataSkill ;
+    rdfs:label "Power BI" .
+
+# ---- Web / Cloud ----
 ex:React rdf:type ex:WebCloudSkill ;
     rdfs:label "React" .
 
@@ -261,20 +303,53 @@ ex:NodeJS rdf:type ex:WebCloudSkill ;
 ex:CloudComputingAWS rdf:type ex:WebCloudSkill ;
     rdfs:label "Cloud Computing (AWS)" .
 
-ex:Docker rdf:type ex:WebCloudSkill ;
+ex:Docker rdf:type ex:WebCloudSkill, ex:DevToolSkill ;
     rdfs:label "Docker" .
 
-ex:Kubernetes rdf:type ex:WebCloudSkill ;
+ex:Kubernetes rdf:type ex:WebCloudSkill, ex:DevToolSkill ;
     rdfs:label "Kubernetes" .
 
-# ---- Security (2) ----
+ex:Angular rdf:type ex:WebCloudSkill ;
+    rdfs:label "Angular" .
+
+ex:Vue rdf:type ex:WebCloudSkill ;
+    rdfs:label "Vue" .
+
+ex:Svelte rdf:type ex:WebCloudSkill ;
+    rdfs:label "Svelte" .
+
+ex:Flutter rdf:type ex:WebCloudSkill ;
+    rdfs:label "Flutter" .
+
+ex:ReactNative rdf:type ex:WebCloudSkill ;
+    rdfs:label "React Native" .
+
+ex:SpringBoot rdf:type ex:WebCloudSkill ;
+    rdfs:label "Spring Boot" .
+
+ex:Django rdf:type ex:WebCloudSkill, ex:AIDataSkill ;
+    rdfs:label "Django" .
+
+ex:Laravel rdf:type ex:WebCloudSkill ;
+    rdfs:label "Laravel" .
+
+# ---- Security ----
 ex:Cybersecurity rdf:type ex:SecuritySkill ;
     rdfs:label "Cybersecurity" .
 
 ex:PenetrationTesting rdf:type ex:SecuritySkill ;
     rdfs:label "Penetration Testing" .
 
-# ---- Dev Tools (3) ----
+ex:EthicalHacking rdf:type ex:SecuritySkill ;
+    rdfs:label "Ethical Hacking" .
+
+ex:Cryptography rdf:type ex:SecuritySkill ;
+    rdfs:label "Cryptography" .
+
+ex:Wireshark rdf:type ex:SecuritySkill, ex:DevToolSkill ;
+    rdfs:label "Wireshark" .
+
+# ---- Dev Tools / Systems ----
 ex:APIIntegration rdf:type ex:DevToolSkill ;
     rdfs:label "API Integration" .
 
@@ -283,6 +358,21 @@ ex:Git rdf:type ex:DevToolSkill ;
 
 ex:GitHub rdf:type ex:DevToolSkill ;
     rdfs:label "GitHub" .
+
+ex:Terraform rdf:type ex:DevToolSkill ;
+    rdfs:label "Terraform" .
+
+ex:Ansible rdf:type ex:DevToolSkill ;
+    rdfs:label "Ansible" .
+
+ex:Jenkins rdf:type ex:DevToolSkill ;
+    rdfs:label "Jenkins" .
+
+ex:Linux rdf:type ex:DevToolSkill, ex:SecuritySkill ;
+    rdfs:label "Linux" .
+
+ex:CI_CD rdf:type ex:DevToolSkill ;
+    rdfs:label "CI/CD" .
 
 # =============================================================
 #  INSTANCES — COMPANIES  (4 companies)

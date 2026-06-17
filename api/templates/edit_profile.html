@@ -136,6 +136,16 @@
                 <input type="text" id="search-skills" onkeyup="renderSkillsGrid()" placeholder="🔎 Search skills by name or category..." style="width: 100%; padding: 0.75rem; border: 1px solid var(--border-color); border-radius: 8px; font-size: 0.9rem; outline: none; transition: border-color 0.2s; box-sizing: border-box;" onfocus="this.style.borderColor='var(--primary-color)'" onblur="this.style.borderColor='var(--border-color)'">
             </div>
 
+            <!-- Category Filter Tabs -->
+            <div class="category-tabs" style="display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1.25rem;">
+                <button type="button" class="tab-btn active" onclick="setCategory('all', this)" style="background-color: var(--primary-color); color: white; border: 1px solid var(--primary-color); padding: 0.35rem 0.8rem; border-radius: 20px; cursor: pointer; font-size: 0.8rem; font-weight: 500; transition: all 0.2s; outline: none;">All</button>
+                <button type="button" class="tab-btn" onclick="setCategory('Programming Language', this)" style="background-color: rgba(255, 255, 255, 0.5); color: var(--text-secondary); border: 1px solid var(--border-color); padding: 0.35rem 0.8rem; border-radius: 20px; cursor: pointer; font-size: 0.8rem; font-weight: 500; transition: all 0.2s; outline: none;">Programming Languages</button>
+                <button type="button" class="tab-btn" onclick="setCategory('AI and Data Science Skill', this)" style="background-color: rgba(255, 255, 255, 0.5); color: var(--text-secondary); border: 1px solid var(--border-color); padding: 0.35rem 0.8rem; border-radius: 20px; cursor: pointer; font-size: 0.8rem; font-weight: 500; transition: all 0.2s; outline: none;">AI & Data Science</button>
+                <button type="button" class="tab-btn" onclick="setCategory('Web and Cloud Technology Skill', this)" style="background-color: rgba(255, 255, 255, 0.5); color: var(--text-secondary); border: 1px solid var(--border-color); padding: 0.35rem 0.8rem; border-radius: 20px; cursor: pointer; font-size: 0.8rem; font-weight: 500; transition: all 0.2s; outline: none;">Web & Cloud</button>
+                <button type="button" class="tab-btn" onclick="setCategory('Cybersecurity Skill', this)" style="background-color: rgba(255, 255, 255, 0.5); color: var(--text-secondary); border: 1px solid var(--border-color); padding: 0.35rem 0.8rem; border-radius: 20px; cursor: pointer; font-size: 0.8rem; font-weight: 500; transition: all 0.2s; outline: none;">Cybersecurity</button>
+                <button type="button" class="tab-btn" onclick="setCategory('Development Tool Skill', this)" style="background-color: rgba(255, 255, 255, 0.5); color: var(--text-secondary); border: 1px solid var(--border-color); padding: 0.35rem 0.8rem; border-radius: 20px; cursor: pointer; font-size: 0.8rem; font-weight: 500; transition: all 0.2s; outline: none;">Dev Tools & Systems</button>
+            </div>
+
             <!-- Interactive Grid Container -->
             <div id="skills-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 0.75rem; max-height: 300px; overflow-y: auto; padding-right: 0.5rem; padding-bottom: 0.5rem;">
                 <!-- JS populated -->
@@ -164,6 +174,23 @@
     <script>
         const ALL_SKILLS = {{ skills_with_tags | tojson }};
         let selectedSkillIds = new Set();
+        let activeCategory = 'all';
+
+        function setCategory(cat, btn) {
+            activeCategory = cat;
+            document.querySelectorAll('.category-tabs .tab-btn').forEach(b => {
+                b.classList.remove('active');
+                b.style.backgroundColor = 'rgba(255, 255, 255, 0.5)';
+                b.style.color = 'var(--text-secondary)';
+                b.style.borderColor = 'var(--border-color)';
+            });
+            btn.classList.add('active');
+            btn.style.backgroundColor = 'var(--primary-color)';
+            btn.style.color = 'white';
+            btn.style.borderColor = 'var(--primary-color)';
+            
+            renderSkillsGrid();
+        }
 
         function renderSkillsGrid() {
             const query = document.getElementById('search-skills').value.trim().toLowerCase();
@@ -223,7 +250,11 @@
             });
             
             // 3. Filter out non-matching skills
-            const filteredSkills = scoredSkills.filter(x => x.scoreMatch > 0);
+            const filteredSkills = scoredSkills.filter(x => {
+                if (x.scoreMatch === 0) return false;
+                if (activeCategory !== 'all' && !x.skill.categories.includes(activeCategory)) return false;
+                return true;
+            });
             
             // 4. Sort: TotalScore descending, then alphabetically
             filteredSkills.sort((a, b) => {
