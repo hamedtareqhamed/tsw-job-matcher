@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>Graduate Profiles & Recommended Jobs</h1>
+    <p class="subtitle">Predefined graduate profiles from the database and their calculated best job matches.</p>
+
+    <div class="list-container" style="max-width: 1100px;">
+        {% for cand in candidates %}
+            <div class="glass-panel" style="margin-bottom: 1.5rem; border-left: 5px solid var(--primary-color);">
+                
+                
+                <div style="display: flex; justify-content: space-between; align-items: start; border-bottom: 1px solid var(--border-color); padding-bottom: 0.75rem; margin-bottom: 1rem;">
+                    <div>
+                        <h3 style="font-size: 1.25rem; font-weight: 700; color: var(--text-primary);">{{ cand.profile.name }}</h3>
+                        <p style="font-size: 0.85rem; color: var(--text-secondary);">
+                            {{ cand.profile.degreeName }} in <strong>{{ cand.profile.fieldOfStudy }}</strong> ({{ cand.profile.institution }}) — <strong>Level: {{ cand.profile.degreeLevel }}</strong> — <strong>📍 Preferred Location: {{ cand.profile.location }}</strong>
+                        </p>
+                        {% if cand.profile.experience %}
+                            <div style="margin-top: 0.35rem; font-size: 0.8rem; color: var(--text-primary); display: flex; align-items: center; gap: 0.4rem; flex-wrap: wrap;">
+                                <span class="badge badge-blue" style="font-size: 0.7rem; padding: 0.1rem 0.35rem;">{{ cand.profile.experience.type }}</span>
+                                <span><strong>{{ cand.profile.experience.role }}</strong> at <em>{{ cand.profile.experience.org }}</em> ({{ cand.profile.experience.duration }} months)</span>
+                            </div>
+                        {% endif %}
+                    </div>
+                    <a href="{{ url_for('load_profile', profile_id=cand.profile.id) }}" class="btn-primary" style="padding: 0.4rem 0.85rem; font-size: 0.8rem;">
+                        Load Profile
+                    </a>
+                </div>
+
+                
+                <div style="margin-bottom: 1.25rem;">
+                    <div style="font-size: 0.75rem; text-transform: uppercase; color: var(--text-secondary); font-weight: 600; margin-bottom: 0.35rem;">
+                        Possessed Skills
+                    </div>
+                    <div class="tag-container">
+                        {% for s in cand.skills %}
+                            <span class="tag" style="background-color: var(--border-color); color: var(--text-primary); border-color: var(--border-color);">
+                                {{ s.label }}
+                            </span>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                
+                {% if cand.best_match %}
+                    <div style="background-color: var(--bg-color); border: 1px solid var(--border-color); border-radius: 12px; padding: 1rem; display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <div style="font-size: 0.75rem; text-transform: uppercase; color: var(--primary-color); font-weight: 700; letter-spacing: 0.05em; margin-bottom: 0.25rem;">
+                                Recommended Job
+                            </div>
+                            <h4 style="font-size: 1.1rem; font-weight: 700; color: var(--text-primary); margin-bottom: 0.15rem;">
+                                {{ cand.best_match.job.title }}
+                            </h4>
+                            <p style="font-size: 0.85rem; color: var(--text-secondary);">
+                                {{ cand.best_match.job.company }} ({{ cand.best_match.job.location }})
+                                {% if cand.best_match.job.industry %}
+                                    — <span style="color: var(--primary-color); font-weight: 500;">{{ cand.best_match.job.industry }}</span>
+                                {% endif %}
+                                — <strong>Required Education: {{ cand.best_match.job.reqEdu }}</strong>
+                            </p>
+                            
+                            <!-- Skill overlaps in recommendation -->
+                            <div class="tag-container" style="margin-top: 0.5rem; display: flex; gap: 0.25rem; flex-wrap: wrap;">
+                                {% for ms in cand.best_match.matched_skills %}
+                                    {% if ms.is_core %}
+                                        <span class="tag tag-success" style="font-size: 0.7rem; padding: 0.1rem 0.35rem; font-weight: 600;">★ {{ ms.label }} (Core)</span>
+                                    {% else %}
+                                        <span class="tag" style="font-size: 0.7rem; padding: 0.1rem 0.35rem; background-color: rgba(56, 189, 248, 0.15); color: #38bdf8; border-color: rgba(56, 189, 248, 0.3); font-weight: 500;">{{ ms.label }} (Bonus)</span>
+                                    {% endif %}
+                                {% endfor %}
+                                {% for ms in cand.best_match.missing_skills %}
+                                    {% if ms.is_core %}
+                                        <span class="tag tag-danger" style="font-size: 0.7rem; padding: 0.1rem 0.35rem; font-weight: 600;">⚠ {{ ms.label }} (Core Missing)</span>
+                                    {% else %}
+                                        <span class="tag" style="font-size: 0.7rem; padding: 0.1rem 0.35rem; background-color: rgba(234, 179, 8, 0.15); color: #fbbf24; border-color: rgba(234, 179, 8, 0.3); font-weight: 500;">{{ ms.label }} (Bonus Missing)</span>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                        </div>
+
+                        
+                        <div style="text-align: right; display: flex; flex-direction: column; align-items: flex-end; gap: 0.35rem;">
+                            <div style="font-size: 1.6rem; font-weight: 800; color: {% if cand.best_match.score >= 75 and cand.best_match.edu_match %}var(--success-color){% elif cand.best_match.score >= 50 and cand.best_match.edu_match %}var(--primary-color){% else %}var(--warn-color){% endif %};">
+                                {{ cand.best_match.score }}%
+                            </div>
+                            <span class="status-label {% if cand.best_match.status == 'Excellent Match' %}status-excel{% elif cand.best_match.status == 'Good Match' %}status-good{% elif cand.best_match.status == 'Education Mismatch' %}status-danger{% else %}status-warning{% endif %}">
+                                {{ cand.best_match.status }}
+                            </span>
+                        </div>
+                    </div>
+                {% else %}
+                    <p style="font-size: 0.9rem; color: var(--text-secondary); font-style: italic;">
+                        No recommendation found.
+                    </p>
+                {% endif %}
+
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %}
