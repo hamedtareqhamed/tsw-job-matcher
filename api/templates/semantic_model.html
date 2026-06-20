@@ -1,6 +1,79 @@
 {% extends "base.html" %}
 
 {% block content %}
+<style>
+    /* Custom Google Font for code */
+    @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&display=swap');
+
+    .sparql-code {
+        background-color: #0b0f19 !important;
+        color: #f8fafc !important;
+        padding: 1.25rem !important;
+        border-radius: 8px !important;
+        font-family: 'Fira Code', monospace !important;
+        font-size: 0.85rem !important;
+        line-height: 1.6 !important;
+        overflow-x: auto !important;
+        margin-bottom: 0.75rem !important;
+        border: 1px solid #1e293b !important;
+    }
+
+    .sparql-editor-container {
+        position: relative;
+        margin-top: 1rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .sparql-editor-label {
+        position: absolute;
+        right: 12px;
+        top: -12px;
+        background: var(--primary-color);
+        color: white;
+        padding: 2px 8px;
+        border-radius: 4px;
+        font-size: 0.7rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        z-index: 10;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+    }
+
+    .sparql-editor {
+        font-family: 'Fira Code', monospace !important;
+        font-size: 0.9rem !important;
+        background-color: #020617 !important;
+        color: #38bdf8 !important;
+        line-height: 1.5 !important;
+        border-radius: 8px !important;
+        padding: 1.25rem !important;
+        width: 100% !important;
+        border: 2px solid var(--primary-color) !important; /* Indigo border to make it distinct! */
+        outline: none !important;
+        box-shadow: 0 0 15px rgba(99, 102, 241, 0.15) !important;
+        transition: all 0.3s ease !important;
+        resize: none !important;
+        overflow-y: hidden !important;
+    }
+
+    .sparql-editor:focus {
+        border-color: #818cf8 !important;
+        box-shadow: 0 0 25px rgba(99, 102, 241, 0.3) !important;
+        background-color: #0b0f19 !important;
+        color: #f8fafc !important;
+    }
+
+    /* SPARQL Syntax Highlighting colors (using safe sp- namespace prefix to avoid keyword collision) */
+    .sp-keyword { color: #f43f5e !important; font-weight: 600 !important; } /* Rose */
+    .sp-var { color: #38bdf8 !important; } /* Light Blue */
+    .sp-uri { color: #c084fc !important; } /* Purple */
+    .sp-ns { color: #fb7185 !important; font-weight: 600 !important; } /* Rose-pink */
+    .sp-literal { color: #34d399 !important; } /* Emerald green */
+    .sp-comment { color: #64748b !important; font-style: italic !important; } /* Cool Gray */
+</style>
+
     <h1>Semantic Web Model & Architecture</h1>
     <p class="subtitle">Technical documentation of the RDF schema, OWL axioms, and SPARQL queries underpinning the IT Job Matcher.</p>
 
@@ -132,7 +205,7 @@
             <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 0.75rem;">
                 This query navigates the RDFS class hierarchy to discover all subclasses of <code>ex:Skill</code>, and then retrieves all skill instances belonging to those classes.
             </p>
-            <pre style="background-color: #0f172a; color: #f8fafc; padding: 1rem; border-radius: 8px; font-family: monospace; font-size: 0.8rem; overflow-x: auto; margin-bottom: 0.75rem;">
+            <pre class="sparql-code">
 PREFIX ex: &lt;http://example.org/jobmatch#&gt;
 PREFIX rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#&gt;
 PREFIX rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt;
@@ -159,7 +232,7 @@ ORDER BY ?catLabel ?label
             <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 0.75rem;">
                 Runs a graph pattern matching union (UNION) with variable bindings (BIND) to identify which skills are classified as Core vs Bonus/Secondary.
             </p>
-            <pre style="background-color: #0f172a; color: #f8fafc; padding: 1rem; border-radius: 8px; font-family: monospace; font-size: 0.8rem; overflow-x: auto; margin-bottom: 0.75rem;">
+            <pre class="sparql-code">
 PREFIX ex: &lt;http://example.org/jobmatch#&gt;
 PREFIX rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#&gt;
 
@@ -194,8 +267,11 @@ WHERE {
         </p>
 
         <form action="{{ url_for('semantic_model') }}" method="POST" style="margin-bottom: 1.5rem;">
-            <div class="form-group">
-                <textarea name="query" class="form-input" rows="8" style="font-family: monospace; font-size: 0.85rem; background-color: #0f172a; color: #f8fafc; line-height: 1.45; border-radius: 8px; padding: 1rem; width: 100%; border: none; outline: none; box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);" required>{{ query }}</textarea>
+            <div class="sparql-editor-container">
+                <div class="sparql-editor-label">
+                    ✍️ Interactive Editor
+                </div>
+                <textarea name="query" class="sparql-editor" placeholder="Write your SPARQL query here..." required>{{ query }}</textarea>
             </div>
             <button type="submit" class="btn-primary" style="margin-top: 0.5rem;">
                 <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -242,4 +318,98 @@ WHERE {
             </div>
         {% endif %}
     </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // 1. Auto-resize textarea
+            const tx = document.querySelector('.sparql-editor');
+            if (tx) {
+                function resize() {
+                    tx.style.height = 'auto';
+                    tx.style.height = tx.scrollHeight + 'px';
+                }
+                tx.addEventListener('input', resize);
+                // Initial resize on load
+                resize();
+            }
+
+            // 2. Syntax highlighting for SPARQL
+            function highlightSPARQL(text) {
+                // Escape HTML first so we don't have issues with < or > in URIs
+                let html = text
+                    .replace(/&/g, "&amp;")
+                    .replace(/</g, "&lt;")
+                    .replace(/>/g, "&gt;");
+
+                // A. Match and wrap comments first using placeholders so they don't get processed by other regexes
+                const comments = [];
+                html = html.replace(/(#.*)/g, (match) => {
+                    comments.push(match);
+                    return `__COMMENT_PLACEHOLDER_${comments.length - 1}__`;
+                });
+
+                // B. Match and wrap literals (strings) using placeholders so their quotes or colons don't get matched
+                const literals = [];
+                // Double quoted strings
+                html = html.replace(/("[^"]*")/g, (match) => {
+                    literals.push(match);
+                    return `__LITERAL_PLACEHOLDER_${literals.length - 1}__`;
+                });
+                // Single quoted strings
+                html = html.replace(/('[^']*')/g, (match) => {
+                    literals.push(match);
+                    return `__LITERAL_PLACEHOLDER_${literals.length - 1}__`;
+                });
+
+                // C. Match URIs first using placeholder to prevent matching inside URLs
+                const uris = [];
+                html = html.replace(/(&lt;http[^&]+&gt;)/g, (match) => {
+                    uris.push(match);
+                    return `__URI_PLACEHOLDER_${uris.length - 1}__`;
+                });
+
+                // D. Match Prefixes and Prefix Properties (e.g. ex:requiresSkill or rdfs:label)
+                html = html.replace(/\b([a-zA-Z0-9_-]+):([a-zA-Z0-9_#-]+)\b/g, 
+                    '<span class="sp-ns">$1</span>:<span class="sp-uri">$2</span>');
+
+                // E. Match Variables (?var)
+                html = html.replace(/(\?[a-zA-Z0-9_]+)/g, '<span class="sp-var">$1</span>');
+
+                // F. Match Keywords
+                const keywords = [
+                    "PREFIX", "SELECT", "WHERE", "UNION", "BIND", 
+                    "ORDER BY", "LIMIT", "FILTER", "AS", "OPTIONAL",
+                    "GRAPH", "CONSTRUCT", "ASK", "DESCRIBE"
+                ];
+                keywords.forEach(keyword => {
+                    const regex = new RegExp('\\b(' + keyword + ')\\b', 'gi');
+                    html = html.replace(regex, '<span class="sp-keyword">$1</span>');
+                });
+
+                // G. Restore URIs
+                uris.forEach((uri, idx) => {
+                    html = html.replace(`__URI_PLACEHOLDER_${idx}__`, `<span class="sp-uri">${uri}</span>`);
+                });
+
+                // H. Restore Literals (wrapped in sp-literal span)
+                literals.forEach((literal, idx) => {
+                    html = html.replace(`__LITERAL_PLACEHOLDER_${idx}__`, `<span class="sp-literal">${literal}</span>`);
+                });
+
+                // I. Restore Comments
+                comments.forEach((comment, idx) => {
+                    html = html.replace(`__COMMENT_PLACEHOLDER_${idx}__`, `<span class="sp-comment">${comment}</span>`);
+                });
+
+                return html;
+            }
+
+            // Apply highlighting to all blocks
+            const codeBlocks = document.querySelectorAll('.sparql-code');
+            codeBlocks.forEach(block => {
+                const raw = block.textContent.trim();
+                block.innerHTML = highlightSPARQL(raw);
+            });
+        });
+    </script>
 {% endblock %}
