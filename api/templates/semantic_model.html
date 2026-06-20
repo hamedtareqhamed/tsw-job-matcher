@@ -77,19 +77,24 @@
         </h3>
         
         <p style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 1.25rem;">
-            The ontology defines six primary classes and a set of custom properties that govern the domain of IT graduate employment:
+            The ontology defines six primary classes, specific skill category subclasses, and custom properties governing the domain of IT job matching:
         </p>
 
         <div style="background-color: #f8fafc; border: 1px solid var(--border-color); border-radius: 12px; padding: 1.25rem; font-size: 0.85rem;">
             <div style="margin-bottom: 1rem;">
-                <strong style="color: var(--text-primary);">Core Classes:</strong>
+                <strong style="color: var(--text-primary);">Core Classes & Taxonomy:</strong>
                 <ul style="margin-left: 1.25rem; margin-top: 0.25rem; color: var(--text-secondary); display: grid; grid-template-columns: 1fr 1fr; gap: 0.25rem;">
-                    <li><code>ex:Applicant</code> — The candidate seeking a job.</li>
-                    <li><code>ex:Job</code> — The vacancy offered by a company.</li>
-                    <li><code>ex:Company</code> — The employer offering positions.</li>
-                    <li><code>ex:Skill</code> — The technical competency.</li>
+                    <li><code>ex:Applicant</code> — Candidate profiles.</li>
+                    <li><code>ex:Job</code> — Employment postings.</li>
+                    <li><code>ex:Company</code> — Hiring organisations.</li>
                     <li><code>ex:Education</code> — Academic degrees.</li>
-                    <li><code>ex:Experience</code> — Internship/freelance history.</li>
+                    <li><code>ex:Experience</code> — Professional internships/roles.</li>
+                    <li><code>ex:Skill</code> — Base technical skill class.</li>
+                    <li><code>ex:ProgrammingLanguage</code> — Subclass of ex:Skill.</li>
+                    <li><code>ex:AIDataSkill</code> — Subclass of ex:Skill.</li>
+                    <li><code>ex:WebCloudSkill</code> — Subclass of ex:Skill.</li>
+                    <li><code>ex:SecuritySkill</code> — Subclass of ex:Skill.</li>
+                    <li><code>ex:DevToolSkill</code> — Subclass of ex:Skill.</li>
                 </ul>
             </div>
             
@@ -98,6 +103,7 @@
                 <ul style="margin-left: 1.25rem; margin-top: 0.25rem; color: var(--text-secondary); display: flex; flex-direction: column; gap: 0.35rem;">
                     <li><code>ex:hasSkill</code> (Domain: <code>ex:Applicant</code>, Range: <code>ex:Skill</code>)</li>
                     <li><code>ex:requiresSkill</code> (Domain: <code>ex:Job</code>, Range: <code>ex:Skill</code>)</li>
+                    <li><code>ex:requiresCoreSkill</code> (Domain: <code>ex:Job</code>, Range: <code>ex:Skill</code>, Sub-property of: <code>ex:requiresSkill</code>)</li>
                     <li><code>ex:offeredBy</code> (Domain: <code>ex:Job</code>, Range: <code>ex:Company</code>, Type: <code>owl:FunctionalProperty</code>)</li>
                     <li><code>ex:offersJob</code> (Domain: <code>ex:Company</code>, Range: <code>ex:Job</code>, Inverse of: <code>ex:offeredBy</code>)</li>
                 </ul>
@@ -148,29 +154,29 @@ ORDER BY ?catLabel ?label
         <!-- QUERY 2 -->
         <div style="border: 1px solid var(--border-color); border-radius: 12px; padding: 1.25rem; background-color: #ffffff;">
             <div style="font-weight: 700; color: var(--text-primary); margin-bottom: 0.5rem; font-size: 0.95rem;">
-                Query 2: Fetching Job Listings and Company Data (Lecture 07 BGPs)
+                Query 2: Fetching Core and Secondary Required Skills (Lecture 08 UNION & BIND)
             </div>
             <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 0.75rem;">
-                Constructs a graph pattern that matches Job instances, binding their required education, location, and the company that offers them.
+                Runs a graph pattern matching union (UNION) with variable bindings (BIND) to identify which skills are classified as Core vs Bonus/Secondary.
             </p>
             <pre style="background-color: #0f172a; color: #f8fafc; padding: 1rem; border-radius: 8px; font-family: monospace; font-size: 0.8rem; overflow-x: auto; margin-bottom: 0.75rem;">
 PREFIX ex: &lt;http://example.org/jobmatch#&gt;
 PREFIX rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#&gt;
 
-SELECT ?job ?label ?compLabel ?location ?level ?reqEdu
+SELECT ?skill ?label ?isCore
 WHERE {
-    ?job rdf:type ex:Job ;
-         rdfs:label ?label ;
-         ex:offeredBy ?company ;
-         ex:hasJobLevel ?level ;
-         ex:hasRequiredDegreeLevel ?reqEdu .
-    ?company rdfs:label ?compLabel ;
-             ex:hasLocation ?location .
+    {
+        ?job ex:requiresSkill ?skill .
+        BIND(false AS ?isCore)
+    } UNION {
+        ?job ex:requiresCoreSkill ?skill .
+        BIND(true AS ?isCore)
+    }
+    ?skill rdfs:label ?label .
 }
-ORDER BY ?label
             </pre>
             <div style="font-size: 0.8rem; color: var(--text-secondary); background-color: #f1f5f9; padding: 0.5rem 0.75rem; border-radius: 6px;">
-                <strong>Academic Connection:</strong> Demonstrates Basic Graph Patterns (BGP) and conjunction rules from <strong>Lecture 07 (SPARQL Part 1)</strong>. It navigates relation paths (linking Jobs to Companies via <code>ex:offeredBy</code>) to resolve multi-variable bindings.
+                <strong>Academic Connection:</strong> Demonstrates graph pattern alternative matchers (<code>UNION</code>) and variable assignment constructors (<code>BIND</code>) from <strong>Lecture 08 (SPARQL Part 2)</strong>. It maps ontological relations to weights dynamically.
         </div>
     </div>
 
